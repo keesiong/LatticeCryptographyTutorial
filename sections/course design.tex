@@ -1,0 +1,135 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+
+\subsection{Course structure}
+
+\begin{itemize}
+    \item Module 1: Computational complexity theory (1.5 week)
+        \begin{itemize}
+            \item Decision and search problems, 
+            \item P, NP, NP-complete, NP-hard, polynomial time reduction, 
+            \item GAP problems and inapproximability
+            \item Average case and worst case hardness, reduction between the two by Ajtai 
+        \end{itemize}
+    \item Module 2: Abstract algebra (2.5 weeks)
+        \begin{itemize}
+            \item Groups, rings, fields, ideals, etc 
+            \item Field extension, Galois theory
+        \end{itemize}
+    \item Module 3: Algebraic number theory (2 week)
+        \begin{itemize}
+            \item Number fields
+            \item Cyclotomic polynomials and cyclotomic fields 
+        \end{itemize}
+    \item Module 4: Lattice theory (1 week) 
+        \begin{itemize}
+            \item Basics of lattices, such as its basis, fundamental region, length, distance metric, etc
+        \end{itemize}
+    \item Module 5: Lattice-based cryptography (2 week) 
+        \begin{itemize}
+            \item Introduce RSA as a general background of public key encryption  
+            \item Emphasize on the connection between lattices and cryptography
+            \item The benefits of using lattice-based cryptography over other types 
+            \item LLL algorithm
+            \item Give more examples of lattice-based cryptography 
+        \end{itemize}
+    \item Module 6: Homomorphic encryption (3 weeks) 
+        \begin{itemize}
+            \item Discuss Gentry's breakthrough
+            \item Introduce different types of HE
+            \item Some examples of HE e.g., BFV
+            \item Demonstrate Microsoft SEAL
+            \item Talk about some recent developments 
+        \end{itemize}
+\end{itemize}
+
+
+\subsection{Aims or goals}
+\textcolor{blue}{Aims or goals in teaching and learning are broad sentences reflecting general intentions
+and desired outcomes of an institution, program or course.
+These important statements stay clearly distinct from learning outcomes. Aims serve the
+important function to indicate and promote the main values and general directions that
+guide the process of teaching and learning.
+Aims reflect vision and general intentions, and the overall desirable results.}
+
+
+Within a year of the publication of the RSA encryption scheme, the desire of making encryption fully homomorphic - that is being able to operate without the secret key on the encrypted data with an unlimited number of additions and multiplications - was proposed by Rivest, Adleman and Dertouzos. 
+The first plausible fully homomorphic encryption scheme, however, was not achieved until the major breakthrough of Gentry's PhD work based on mathematical lattices. 
+This course introduces the technical background of homomorphic encryption in order to assist learners to understand its theoretical foundation and be able to apply it either in  an experimental or practical setting. 
+
+\iffalse
+, be able to understand how different parameters can affect the performance of HE cryptosystems (e.g., SEAL?).  
+
+how number fields and mathematical lattices are utilized to achieve more efficient and higher secure cryptosystems, 
+
+understand the advantages of lattices-based cryptography over other types such as RSA and diffie-hellman, 
+
+understand the important role that cyclotomic polynomials play in designing secure cryptosystems, in particular for HE, 
+
+and how these abstract mathematical concepts are employed together to achieve fully homomorphic encryption,
+
+be familiar with the different types of HE encryption schemes (e.g, FHE, PFE, etc) and their limitations, 
+
+understand the potential applications of HE in practice,
+\fi 
+
+
+\subsection{Learning objectives}
+\textcolor{blue}{COURSE	OBJECTIVES are	what	you	will	present	in	the	course	– class	and	reading	content,	direction	and	
+intention	of	a	course.
+Learning objectives refer to teachers’ intentions for learners, such as what students
+will be taught during the course or program.
+It is important to note that learning objectives reflect what teachers do.}
+
+The two main objectives of the course are introducing the core of lattice-based cryptography, i.e., the learning with error (LWE) and ring learning with error (RLWE) problems, and their applications in developing efficient and secure (against quantum computing) homomorphic encryption schemes. 
+
+The course can be divided intro three parts in pedagogical order as follows. 
+\begin{enumerate}
+    \item The first part focuses on the LWE problem, which is an efficient average-case hard lattice problem. This part begins with short introductions on computational complexity theory, lattice theory and a necessary discrete Gaussian distribution that is essential in later lattice-based cryptosystems.
+    
+    \item The second part discusses the RLWE problem, which is a generalization of LWE from the integer domain to an advanced algebraic domain in order to reduce LWE's public key size from roughly quadratic to linear. As LWE does not straightforwardly generalize to its ring version, some required background knowledge will be briefly discussed with intuitions, including cyclotomic polynomial, Galois theory and algebraic number theory. 
+    
+    \item The third part 
+\end{enumerate}
+
+The first five modules cover the necessary mathematical and computational background to understand latticed-based cryptography and homomorphic encryption. 
+
+Module 1 briefly introduces some of the basics of computational complexity theory and variations of the standard decision and optimization problems, such as GAP problems and inapproximability. This module is the key to realise the provable security of the schemes that will be introduced later in the course.
+
+Module 2 covers some basic concepts and key results of abstract algebra. The module finishes by introducing a more advanced topic in Galois theory that is essential for understanding some useful properties of cyclotomic number fields and proof of the hardness of the Ring Learning With Errors problem. 
+
+Module 3 builds on the topics of module 2 to introduces number fields and cyclotomic polynomials that are ideal candidates for some lattice-based encryption schemes. The module provides a number theoretical view of the ring of integer polynomials that will be frequently discussed in homomorphic encryption. 
+
+Module 4 briefly introduces what lattices are. The module is important for understanding the hardness of some lattice problems.  
+
+Module 5 focuses on the advantages of lattice-based encryption over the traditional strategies and how some encryption schemes can be reduced to hard lattice problems such as the NTRU scheme. The module starts by discussing the RSA scheme as a general background to public key encryption. 
+
+The two main objectives of the course are introducing the core of lattice-based cryptography, i.e., the learning with error (LWE) and ring learning with error (RLWE) problems, and their applications in developing efficient and secure (against quantum computing) homomorphic encryption (HE) schemes. 
+
+The course can be divided intro three parts in pedagogical order as follows. Each part will be presented with definitions, examples, discussions around the intuitions of abstract concepts and more importantly corresponding computer code to help develop the understanding. 
+\begin{enumerate}
+	\item The first part focuses on the LWE problem, which is an efficient average-case hard lattice problem. This part begins with short introductions on computational complexity theory and lattice theory, both are essential in later lattice-based cryptosystems.
+	
+	\item The second part discusses the RLWE problem, which is a generalization of LWE from the integer domain to an advanced algebraic domain in order to reduce LWE's public key size from roughly quadratic to linear. As LWE does not straightforwardly generalize to its ring version, some required background knowledge will be briefly discussed with intuitions examples and computer code, including cyclotomic polynomial and its connection to number field via tools from Galois theory and algebraic number theory. 
+	
+	\item Having thoroughly introduced LWE and RLWE problems, the third part of the course aims to develop an intuition of how to design efficient HE schemes based on these hard problems. In particular, the course focuses on a series of works that are considered as the second generation of HE developments. These schemes are both similar and different to Gentry's  original fully HE scheme. The similarity is in designing a somewhat HE scheme first, then use bootstrapping to achieve fully HE. The difference is that they avoided using Gentry's ``squashing'' technique, but based on some algebraic properties of instances to make the somewhat HE schemes bootstrappable.   
+\end{enumerate}
+
+
+\subsection{Learning outcomes}
+\textcolor{blue}{LEARNING	OUTCOMES are	concerned	with	the	achievement	of	the	learner:	the	skills	and	knowledge	that	your	
+students	will	acquire	through	attending	classes	and	through	completing	all	set	tasks.	Student	learning	
+outcomes	summarise	what	they	will	know,	understand	and	be	able	to	demonstrate	as	a	result	of	the	course.
+These	may	include	dispositions.
+Learning outcomes are statements of what a student will be able to do or demonstrate
+at the completion of a certain sequence of learning (course, program).
+Learning outcomes are mainly concerned with the achievements of the learner and less
+with the intentions of the teacher.
+Learning outcomes inform students of what is expected of them in terms of performance,
+to achieve desired grades and credits.}
+
+
+
+\end{document}

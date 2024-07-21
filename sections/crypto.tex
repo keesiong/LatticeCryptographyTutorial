@@ -1,0 +1,106 @@
+\documentclass[../main.tex]{subfiles}
+%\graphicspath{{\subfix{images/}}}
+
+
+\begin{document}
+\label{sec:crypto}
+
+The history of cryptography dates back to the pre-computer era, but with the same goal as today's, that is, securely sharing secret information between parties on public communication channels. A simple but motivating example is shown next, which is a \textit{shift cipher} encryption technique used by Julius Caesar (during 81-45BC) to securely communicate with his troops on battlefields \cite{hoffstein2008introduction}.
+\begin{align*}
+	\frac{\text{j\;s\;j\;r\;d\;k\;f\;q\;q\;n\;s\;l\;g\;f\;h\;p\;g\;w\;j\;f\;p\;y\;m\;w\;t\;z\;l\;m\;n\;r\;r\;n\;s\;j\;s\;y\;q\;z\;h\;n\;z\;x}}{\text{e\;n\;e\;m\;y\;f\;a\;l\;l\;i\;n\;g\;b\;a\;c\;k\;b\;r\;e\;a\;k\;t\;h\;r\;o\;u\;g\;h\;i\;m\;m\;i\;n\;e\;n\;t\;l\;u\;c\;i\;u\;s}}
+\end{align*}  	
+As the name of the technique suggests, each letter in the plaintext (below the horizontal line) was shifted by a pre-determined number of places along a fixed direction in the alphabet. This transforms it into a ciphertext (above the horizontal line) that do not hold the original information any more. 
+
+Back then, Caesar's method was still able to effectively protect his secret messages to the troops from eavesdroppers. But with the help of nowadays multi-core GHz processor-computers that handle billions of instructions per second, this encryption method will fail within seconds. The example motivates the need to design more complex ciphertexts that are hard to decrypt, where the hardness should both be measurable and tunable by some parameters in order to cope with the increasing computing resources of potential attackers.
+
+With the help of mathematics and computer science, in particular probability theory and computational complexity theory, the safety of modern encryption methods can be captured by \textit{computational security} \index{computational security}, a security notion, which allows an attacker to succeed in guessing the secret message with a measurable chance and computational effort such as running time. A frequently used approach to realize this security notion is to parameterize the probability of success and algorithmic running time of an attack by an integer-valued security parameter. This was named ``asymptotic approach'' and discussed in Chapter 3 \cite{katz2014introduction} in more details. Some of the following results are also taken from that chapter, but presented in different orders and notations to ensure consistency of this tutorial paper.  
+
+Under the notion of computational security, one can draw the connection between an encryption scheme and a computational problem that has been proved (or believed with high confidence) to be hard to solve within a practical time. A famous example is that the security of the RSA encryption scheme relies on the large integer factorization problem, which is presumed (without an actual proof) hard to solve by an efficient non-quantum algorithm. The RSA problem is to solve the unknown $x$ in the equation $x^e \equiv c \bmod N$. The problem is easy when $N$ is prime, so it comes down to primality test of $N$.    
+
+The \textit{security parameter} \index{security parameter} described above, sometimes denoted by $n$ (or $\lambda$ or $\kappa$), reflects the input size of the underlying hard computational problem. The larger the security parameter, the larger the input size, so the problem is more difficult to be solved in a practical time frame, which ensures the encryption scheme is less likely to be attacked with success. In the RSA scheme, the security parameter is the bit length $n$ of the modulus $N$. The larger $n$ is, the more difficult it is to prime factor $N$ to efficiently solve the RSA problem. By convention, the security parameter $n$ is often supplied to a scheme in the unary format $1^n$ by repeating the number 1 $n$ times. 
+\subsection{Encryption schemes}
+Now that we discussed the security parameter, we formally introduce two types of encryption schemes, that is, the private (or symmetric) and public (asymmetric) key encryption schemes. The two types are similar in the sense that they both consists of three sub-steps for key generation, encryption and decryption. The main difference is that private key encryption uses only one key for both encryption and decryption (hence the name symmetric), whilst public key encryption uses one key for each purpose.
+
+\begin{definition}
+	Define the following three polynomial time algorithms: 
+	\begin{itemize}
+		\item Key generation: A probabilistic algorithm that generates a key $k \leftarrow \keygen(1^n)$ for encryption and decryption, where $|k| > n$.   
+		\item Encryption: A probabilistic algorithm that encrypts the plaintext $m \in \{0, 1\}^*$ to a ciphertext $c \leftarrow \enc(k, m)$ using the key.
+		\item Decryption: A deterministic algorithm that decrypts the ciphertext with the key to get the plaintext  $m \leftarrow \dec(k,c)$.
+	\end{itemize} 
+	The collection $(\keygen, \enc, \dec)$ forms a \textbf{private key encryption scheme} \index{private key encryption scheme} if for all $n, k, m$, it satisfies $m \leftarrow \dec(k,\enc(k,m))$.
+\end{definition}
+
+\begin{definition}
+	Define the following three polynomial time algorithms: 
+	\begin{itemize}
+		\item Key generation: A probabilistic algorithm that generates a pair of keys $(\pk,\sk) \leftarrow \keygen(1^n)$, where $\pk$ is the public key for encryption and $\sk$ is the secret key for decryption and both have sizes larger than $n$.  
+		\item Encryption: A probabilistic algorithm that encrypts the plaintext $m \in \{0, 1\}^*$ to a ciphertext $c \leftarrow \enc(\pk, m)$ using the public key.
+		\item Decryption: A deterministic algorithm that decrypts the ciphertext using the secret key to get $m \leftarrow \dec(\sk,c)$.
+	\end{itemize} 
+	The collection $(\keygen, \enc, \dec)$ forms a \textbf{public key encryption scheme} \index{public key encryption scheme} if for all $n, (\pk,\sk), m$, it satisfies $m \leftarrow \dec(\sk,\enc(\pk,m))$. 
+\end{definition}
+
+\subsection{Computational security}
+Generally speaking, public key encryption uses longer keys due to the fact that one key is public. This in return makes it slower than private key encryption. It is, however, more convenient when under private key encryption, no secure channel is available for sharing the key or the key needs to be changed constantly for different parties. Regardless, the requirement for the keys (in both private and public key encryptions) to be larger than $n$ is to ensure the keys are at least of certain sizes in order to indicate the lower bound of an encryption scheme.  
+
+As $n$ directly reflects the security of an encryption scheme, it is convenient to parameterize an attacker's running time and probability of success by $n$. More specifically, the running time is defined as the time taken to attack the scheme by a randomized algorithm. For practical purpose, this is often preferred to be polynomial in $n$, denoted by $poly(n)$. From the designer's point of view, an encryption scheme is only considered secure if both the probability of success is significantly small and such a probability decreases as $n$ gets larger. A frequently used function that captures these two characteristics is called a \textit{negligible function}. 
+
+\begin{definition}
+	A function $\mu: \N \rightarrow \R$ is \textbf{negligible} \index{negligible}, if for every positive integer $c$, there exists an integer $N_c$ such that for all $n > N_c$, we have $|\mu(n)| < n ^{-c}$.
+\end{definition}
+An example is the negative exponential function $\mu(n)=2^{-n}$. For $c=6$, the threshold to satisfy the above condition is $N_c=30$. 
+
+When a function is not defined explicitly, we use $negl(n)$ to indicate it is negligible. Another characteristic that makes negligible function a suitable candidate for measuring an attacker's probability of success is due to the fact that it is still negligible even after multiplied by a polynomial function of $n$, that is, $|poly(n)| \cdot negl(n)$ is also negligible (see Proposition 3.6 \cite{katz2014introduction}). This assures that if an attacker has a negligible probability of success, his chance stays extremely small even if the same attack is repeated a polynomial number of times (in $n$). 
+
+An example (Example 3.2 \cite{katz2014introduction}) to illustrate this negligible probability and the running time is when an adversary's probability of success is $2^{40} \cdot 2^{-n}$ by running an attacking algorithm for $n^3$ minutes. If the security parameter is set to $n=40$, the adversary only needs to run the attack for roughly $40^3 \approx 44$ days to break the system with a probability 1. But if the security parameter is set large $n=500$, the adversary's chance of breaking the system is $2^{-460}$ that is almost 0 even if the attack runs for 237 years. 
+
+\begin{definition}
+	An encryption scheme is \textbf{secure} \index{secure!} if any probabilistic polynomial time (PPT) \index{PPT} adversary has only a negligible probability of success to break the scheme. 
+\end{definition}
+Here, probabilistic refers to the attack being a randomized algorithm, which typically runs faster than deterministic algorithms.
+
+So far, we have implicitly discussed the notion of security (or breaking an encryption scheme) without formally defining the meaning of it. The concrete security definition that is most relevant to this tutorial paper is semantic security.
+Below we give a formal definition of it and an equivalent definition, called indistinguishability which is easier to work with in practice. Both definitions can be defined for either private or public key encryptions, with the difference being a public key is also given for the public key encryption case. 
+
+At a high level, semantic security means given a ciphertext that encrypts one of two messages, a PPT adversary has no better chance than random guessing that the ciphertext is an encryption of one message or the other. 
+
+\begin{definition}
+	\label{def:semSec}
+	\reversemarginpar
+	\marginnote{\textit{Semantic security}}
+	An (public or private key) encryption scheme $\Pi$ is \textbf{semantically secure} \index{secure! semantically} if for every PPT adversary $\calA$, there is another PPT adversary $\calA'$ such that their chances of guessing the plaintext $m$ are almost identical, regardless $\calA'$ is only given the length of $m$. That is, let $c \leftarrow \enc(k,m)$, then
+	\begin{equation*}
+	\left|Pr[\calA(1^n, c)=m] - Pr[\calA'(1^n, |m|)=m]\right| \le negl(n).
+	\end{equation*}
+\end{definition}
+
+It is convenient to consider the attack model as a distinguisher (i.e., a PPT algorithm) that tries to exhibit the non-randomness from the ciphertexts in order to associate a ciphertext with a particular plaintext. If the adversary's chance of success is better than random, then the encryption scheme is vulnerable to attacks. The process of guessing the source of a given ciphertext can be formalized as an \textbf{adversarial indistinguishability experiment}  (Section 3.2.1 \cite{katz2014introduction}). Given a PPT adversary $\calA$ and a (public or private) encryption scheme $\Pi$, the experiment outputs $\text{IndisExp}_{\calA, \Pi}(n)=1$ for a successful guess of the source plaintext. 
+
+\begin{definition}
+	An (private or public key) encryption scheme $\Pi$ is 
+	\reversemarginpar
+	\marginnote{\textit{Indistinguishable}}
+	\textbf{indistinguishable} \index{secure! indistinguishable} if it satisfies 
+	\begin{equation*}
+	Pr\left[\text{IndisExp}_{\calA, \Pi}(n)=1\right] \le \frac{1}{2} + negl(n)
+	\end{equation*}
+	for all PPT adversary $\calA$ and security parameter $n$.
+\end{definition}
+
+The following theorem states the equivalent relationship between semantic security and indistinguishability (see Theorem 3.13 \citep{katz2014introduction}). The same equivalent relation can also be proved under the public key encryption setting.\footnote{See a proof in Lecture 9: \textit{Public Key Encryption of} the course CS 276 – \textit{Cryptography} (Oct 1, 2014) at UC Berkeley by the instructor Sanjam Garg.}
+
+\begin{theorem}
+	A private key encryption scheme is indistinguishable in the presence of an eavesdropper if and only if it is semantically secure in the presence of an eavesdropper. 
+\end{theorem}
+
+Both semantic security and indistinguishablity discussed above are in the presence of an eavesdropper, who passively receives/intercepts a plaintext and tries to guess the corresponding plaintext. In the case of public-key encryption, the adversary has access to the public key and the encryption method, so it is possible for the adversary to compare the intercepted ciphertext with a self-encrypted ciphertext, and use this piece of information to increase the probability of successfully guessing the plaintext. By assuming the adversary has an oracle access to the encryption scheme which allows repeated interactions, this attack model is valid for both public and private key encryptions (Section 3.4.2 \cite{katz2014introduction}). The security notion defined under such a \textit{chosen-plaintext attack} (CPA) \index{secure! CPA} model is called CPA security and is a stronger security definition than the previous one which is defined in the presence of an eavesdropper. Similarly, semantic security and indistinguishability can also be defined under chosen plaintext attack, and a similar equivalent relations can be established between semantic security under CPA and IND-CPA \index{secure! IND-CPA}. This stronger level of security is useful when introducing homomorphic encryption. 
+
+
+
+%mention level of security, brute force attack, 
+
+%cpa, semantic secure, public and private key enc,
+
+
+\end{document}

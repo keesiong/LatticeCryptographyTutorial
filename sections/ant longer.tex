@@ -1,0 +1,1182 @@
+\documentclass[../main.tex]{subfiles}
+%\graphicspath{{\subfix{images/}}}
+
+
+\begin{document}
+
+\label{appen:ant}
+
+%\section{Algebraic Number Theory (medium+)}
+
+This section introduces some of the basic results in \textit{Algebraic Number Theory} that will be used in lattice-based cryptography. In particular, we will focus on the ring of integers, their integral and fractional ideals. The aim is to build the important connection between ideals of a ring of integers and ideal lattices, which is the key in those homomorphic encryption schemes that are based on the ring learning with error (RLWE) problem. 
+
+\subsection{Algebraic number field}
+\label{app subsection:number field}
+
+%\label{app subsection:algebraic number field}
+%Some of the concepts in this section have been discussed in Section \ref{app app subsection:field extension}. 
+
+Recall that an algebraic number (integer) is a complex number that is a root of a non-zero polynomial with rational (integer) coefficients. Below we define algebraic number fields, which are special cases of extension fields where the base field is the rationals $\Q$.
+
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Number field}}
+An \textbf{algebraic number field} (or simply \textbf{number field}) is a finite extension of the field of rationals by algebraic numbers, i.e., $\mathbb{Q}(r_1, \dots, r_n)$, where $r_1, \dots, r_n$ are algebraic numbers.
+\end{definition}
+
+An 
+\reversemarginpar
+\marginnote{\textit{Cyclotomic field}}
+nth root of unity $\zeta_n$ is an algebraic number, so the cyclotomic extension $\Q(\zeta_m)$ is also a number field that is called the 
+\textbf{nth cyclotomic number field} (or \textbf{nth cyclotomic field}). 
+
+A number field $K=\Q(r)$ forms a vector space over the base field $\Q$ with the basis $\{1,r,\dots,r^{n-1}\}$, which is called the 
+\reversemarginpar
+\marginnote{\textit{Power basis}}\index{power basis}
+\textbf{power basis} of $K$ because it is formed by the powers of a number $r$. By the Primitive Element Theorem, it is always possible to get a power basis for a number field.
+
+\begin{theorem}[\textbf{Primitive element theorem}]
+\label{app thm:primEleThm}
+\reversemarginpar
+\marginnote{\textit{Primitive element}}
+If $K$ is an extension field of $\mathbb{Q}$ and it has finite degree $[K:\mathbb{Q}] < \infty$, then $K$ has a
+\textbf{primitive element} $r$ such that $r \notin \mathbb{Q}$ and $K=\mathbb{Q}(r)$.
+\end{theorem}
+
+\begin{example}
+The number field $K=\Q(\sqrt{2})$ is a degree 2 $\Q$-vector space. It has a primitive element $\sqrt{2}$ and a basis $\{1, \sqrt{2}\}$.
+
+The number field $K=\Q(\sqrt[3]{2})$ has degree 3. It has a primitive element $\sqrt[3]{2}$ and a basis $\{1,\sqrt[3]{2},\sqrt[3]{4}\}$. 
+
+The number field $K=\Q(\sqrt{2},\sqrt{3})$ has degree 4. It has a primitive element $r=\sqrt{2}+\sqrt{3}$, so $K=\Q(\sqrt{2},\sqrt{3}) = \Q(\sqrt{2}+\sqrt{3})$. It has a power basis $\{1,r,r^2,r^3\}=\{1,\sqrt{2}+\sqrt{3},5+2\sqrt{6},11\sqrt{2}+9\sqrt{3}\}$. To see this is a basis, we know from field extension that $\{1,\sqrt{2},\sqrt{3},\sqrt{6}\}$ is a basis of $K$. This basis can be expressed in terms of the linear combinations of the power basis.
+\end{example}
+
+For a number field $K$, the set of all algebraic integers forms a ring under the usual addition and multiplication operations in $K$ (exercise).
+This set generalizes the set of \textbf{rational integers} $\Z$. It is particularly important for the RLWE problem. 
+
+
+%\textcolor{red}{It perhaps has more deep motivations that I don't know of.}
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Ring of integers}}
+The \textbf{ring of integers} of an algebraic number field $K$, denoted by $\OO_K$, is the set of all algebraic integers that lie in the field $K$. 
+\end{definition}
+For example, the set $\Z$ of rational integers is the ring of integers of the number field $\mathbb{Q}$, i.e., $\Z = \mathcal{O}_{\Q}$. 
+Recall that an integral domain is a non-zero commutative ring in which the product of two non-zero elements is non-zero. $\Z$ is an integral domain, 
+\reversemarginpar
+\marginnote{\textit{$\OO_K$ is ID}}
+so is its generalization $\OO_K$, because $\OO_K \subseteq K$ is in a number field which is an integral domain.
+In general, determining the ring of integers of a number field is a difficult problem, unless the number field is quadratic that is a $\Q$-vector space of degree 2 as stated in the next theorem. 
+
+
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Square free}}
+A number is \textbf{squarefree} if its prime decomposition contains no repeated factors. 
+\end{definition}
+All prime numbers are squarefree. Some composite numbers are squarefree and some are not. For example, 4 is not squarefree, but 6 is. 
+
+\begin{theorem}
+\label{app thm:roiQuadField}
+\reversemarginpar
+\marginnote{\textit{$\OO_K$ in quadratic $K$}}
+\label{app thm:OKQuadField}
+%\label{app theorem:ring of integers quadratic field}
+Let $K$ be a quadratic number field and $m$ be a unique squarefree integer such that $K=\Q(\sqrt{m})$. Then the set $\OO_K$ of algebraic integers in $K$ is given by 
+\begin{equation*}
+    \OO_K = 
+    \begin{cases}
+      \Z + \Z\sqrt{m}, & \text{if $m \not\equiv 1 \bmod 4$} \\
+      \Z + \Z\left( \frac{1+\sqrt{m}}{2}\right), & \text{if $m \equiv 1 \bmod 4$}
+    \end{cases}
+\end{equation*}
+\end{theorem}
+
+For example, if $K=\Q(\sqrt{-7})$ then $\OO_K = \Z+\Z\left(\frac{1+\sqrt{-7}}{2} \right)$. 
+If  $K=\Q(\sqrt{-5})$ then $\OO_K = \Z + \Z \sqrt{-5}$.
+
+
+Since the set of rational integers $\Z \subseteq \OO_K$ is always contained in the ring of integers of a number field $K$ (of degree $n$), this makes $\OO_K$ a $Z$-module. Recall that a module is a generalization of a vector space where scalar multiplications are defined in a ring rather than a field. 
+\reversemarginpar
+\marginnote{\textit{$\OO_K$ is free $Z$-module}}
+In fact, $\OO_K$ is a free $Z$-module, which means it has a basis $B=\{b_1, \dots, b_n\} \subseteq \OO_K$ such that every element in $\OO_K$ can be written as an integer linear combination of the basis. 
+The basis is called a \textbf{$\Z$-basis} of $\OO_K$. It is also a \textbf{$\Q$-basis} of $K$, because every element $r \in K$ can be written as a linear combination $r=\sum_{i=1}^n a_i b_i$, where $a_i \in \Q$.  
+
+More importantly, the basis $B$ is called an \textbf{integral basis} 
+\reversemarginpar
+\marginnote{\textit{Integral basis}}
+of the number field $K$ (and of the ring of integers $\OO_K$ as used by Ben Green).
+Note that although the ring of integers $\OO_K$ always has a basis, it does NOT always have a power basis. A special case is when $K$ is a cyclotomic number field. In this case, the power basis of $K$ is also an integral basis of $K$ (or $\OO_K$). 
+
+The essential connection between $\OO_K$ and lattices is by relating the number field $K$ to the $n$-dimensional Euclidean space $\R^n$. This is done via an embedding of $K$ to a space $H$ that is isomorphic to $\R^n$. Suppose $K$ is a number field with degree $[K:\Q]=n$, then we have $n$ field embeddings (i.e., field or injective ring homomorphisms) $\sigma_i: K \rightarrow \C$ such that the base field $\Q$ is fixed by the embeddings. For a primitive element $r$ in $K$ but not in $\Q$, i.e., $K=\Q(r)$, each embedding $\sigma_i: K \rightarrow \C$ is given by the map from $r$ to a root of $r$'s minimal polynomial $f(x) \in \Q[x]$. The following proposition states that there are $n$ distinct such embeddings from $K$ to $\C$. 
+
+\iffalse
+By definition of the embeddings, we have 
+\begin{enumerate}
+    \item for a number field $K=\Q(r)$, each embedding $\sigma_i$ is uniquely determined by its image $\sigma_i(r)$, 
+    \item if $f(x) \in \Q[x]$, then each $\sigma_i$ maps a root of $f(x)$ to another root of it i.e., if $f(r)=0$ then $f(\sigma_i(r))=0$, because $f(\sigma_i(r)) = \sigma_i(f(r)) = \sigma_i(0) = 0$ as ring homomorphism fixes 0.  
+\end{enumerate}
+
+Due to the above, the following proposition can be proved. 
+\fi 
+
+
+\begin{proposition}
+Let $K$ be an algebraic number field of degree $n$. Then there are precisely $n$ distinct field embeddings from $K$ to $\C$. 
+\end{proposition}
+
+The embeddings $\{\sigma_i\}_{i \in [n]}$ map the primitive element $r$ to different roots of $r$'s minimal polynomial $f(x)$, which is a collection of real and complex numbers. Hence, we can distinguish these embeddings as real and complex embeddings. 
+\reversemarginpar
+\marginnote{\textit{Real and complex embeddings}}
+If $\sigma_i(K) \subseteq \R$ (or $\sigma_i(r) \in \R$) then it is a \textbf{real embedding}, otherwise it is a \textbf{complex embedding}. By Complex Conjugate Root Theorem\footnote{The complex roots of real coefficient polynomials are in conjugate pairs.},  the images of the complex embeddings are in conjugate pairs, so we only need to keep half of the complex embeddings and split each of them into the real and complex parts. Let $s_1$ be the number of real embeddings and $s_2$ be the number of conjugate pairs of complex embeddings, then the total number of embeddings is $n=s_1 + 2s_2$. In addition, let $\{\sigma_i\}_{i \in [s_1]}$ be the real embeddings, $\{\sigma_j\}_{j \in [s_1+1, n]}$ be the complex embeddings and $\sigma_{s_1 + j} = \overline{\sigma_{s_1 + s_2 + j}}$ be the conjugate pairs for $j \in [s_2]$, then we have the following definition of a canonical embedding of a algebraic number field. 
+
+
+\begin{definition}
+\label{app def:canEmbd}
+\reversemarginpar
+\marginnote{\textit{Canonical embedding}}
+A \textbf{canonical embedding} (or \textbf{Minkowski embedding}) $\sigma$ of an algebraic number field $K$ of degree $n$ to the $n$-dimensional complex plane $\C^n$ is defined as 
+\begin{align*}
+    \sigma: K &\rightarrow \R^{s_1} \times \C^{2s_2} \subseteq \C^n \\
+    %\sigma(r) &\mapsto (\sigma_1(r), \dots, \sigma_{s_1}(r), \sigma_{s_1+1}(r),\dots, \sigma_{s_1+s_2}(r)),
+    \sigma(r) &\mapsto (\sigma_1(r), \dots, \sigma_{s_1}(r), \sigma_{s_1+1}(r),\dots, \sigma_n(r)).
+\end{align*}
+\end{definition}
+
+As mentioned above, the complex embeddings are in conjugate pairs so it is not necessary to keep both complex embeddings ini a conjugate pair. This gives rise to a different (and more practical)
+\reversemarginpar
+\marginnote{\textit{$\tau$ embedding}}
+embedding  
+\begin{align*}
+    \tau:K &\rightarrow V\\
+    \tau(r) &\mapsto (\sigma_1(r), \dots, \sigma_{s_1}(r), \sigma_{s_1+1}(r),\dots, \sigma_{s_1+s_2}(r)),
+\end{align*}
+where for all $i \in [s_1+s_2,n]$, each $\sigma_i$ separates the real and imaginary parts as  $\sigma_i(r)=\left(Re(\sigma_r(r)),Im(\sigma_i(r))\right)$, so the image of this embedding can be explicitly write out as  
+\begin{align}
+\label{app equation:minkowski embedding}
+    \tau(r) = (&\sigma_1(r), \dots, \sigma_{s_1}(r), \nonumber \\  
+    &Re(\sigma_{s_1+1}(r)),Im(\sigma_{s_1+1}(r)),\dots, Re(\sigma_{s_1+s_2}(r)),Im(\sigma_{s_1+s_2}(r))).
+\end{align}
+
+The canonical embedding maps a number field to an $n$-dimensional space, 
+\reversemarginpar
+\marginnote{\textit{Canonical space}}
+named \textbf{canonical space} (or \textbf{Minkowski space}) and can be expressed as  
+\begin{equation*}
+H = \left\{(x_1, \dots, x_n) \in \R^{s_1} \times \C^{2s_2} \mid x_{s_1 + j} = \overline{x_{s_1 + s_2 + j}}, \forall j \in [s_2]\right\} \subseteq \C^n.   
+\end{equation*}
+%The \textbf{Minkowski space} $H_{\R}$ in \citep{mukherjee2016cyclotomic} is isomorphic to this canonical space $H$ with a minor difference. In $H_{\R}$, only one element from each complex conjugate pair is kept and it is written in two parts as $(Re, Im)$.
+The canonical space $H$ can be verified to be isomorphic to $\R^n$ using the following steps. We can establish a one to one correspondence between the standard basis of $\C^n$ and an orthonormal basis of $H$. In detail, let $\{e_i\}_{i \in [n]}$ be the standard basis of $\C^n$ where in each $e_i$ the ith component is 1 and the rest are zero. Then we can build a basis $\{b_i\}_{i \in [n]}$ for $H$ such that 
+\begin{itemize}
+    \item for $j \in [s_1]$, let $h_j = e_j$  and 
+    \item for $j \in [s_1+1, s_1 + s_2]$, let $h_j = \frac{1}{\sqrt{2}} (e_j + e_{j + s_2})$ and $h_{j+s_2} = \frac{i}{\sqrt{2}}(e_j - e_{j + s_2})$.
+\end{itemize}
+Similarly, we can prove the space $V$, to which $K$ is mapped to by the embedding $\tau$ is also isomorphic to $\R^n$. %This the isomorphism with $\R^n$ can be checked by a map $F(x_i) \mapsto x_i$ for $i \in [1, s_i]$ and $F(x_i) \mapsto Re(x_i)$ for $i \in [s_1+1, s_1+s_2]$ and $F(x_i) = Im(x_i)$ for $i \in [s_1+s_2+1,n]$. As shown in the example on Page 39 of \cite{mukherjee2016cyclotomic}.
+
+In the next example, we will look at the canonical embedding of a cyclotomic number field and construct a basis of the canonical space by using the above rules. 
+\begin{example}
+Let  $K=\Q(\zeta_8)$ be a cyclotomic number field, where $\zeta_8 = \frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}$ is an 8th primitive root of unity. The minimal polynomial of $\zeta_8$ is the 8th cyclotomic polynomial $\Phi_8(x) = x^4+1$ with degree $\phi(8)=4$, whose roots are the 8th primitive roots
+\begin{align*}
+\zeta_8 &= \frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}, \\
+\zeta_8^3 &= -\frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2},\\
+\zeta_8^5 &= -\frac{\sqrt{2}}{2}- i \frac{\sqrt{2}}{2}, \\
+\zeta_8^7 &= \frac{\sqrt{2}}{2}- i \frac{\sqrt{2}}{2}.
+\end{align*}
+The degree of the cyclotomic field is $n=4$, so all 4 embeddings $\sigma_i: K \rightarrow \C^4$ are complex, that is, $s_1=0$ and $s_2=2$. The four complex embeddings are 
+\begin{align*}
+    \sigma_1\left(\frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}\right) &= \frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}, \\
+    \sigma_2\left(\frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}\right) &= -\frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}, \\
+    \sigma_3\left(\frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}\right) &= \frac{\sqrt{2}}{2}- i \frac{\sqrt{2}}{2}, \\
+    \sigma_4\left(\frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}\right) &= -\frac{\sqrt{2}}{2}- i \frac{\sqrt{2}}{2}, 
+\end{align*}
+where $\sigma_1,\sigma_3$ and $\sigma_2,\sigma_4$ are in conjugate pairs. So the embedding by Equation \ref{app equation:minkowski embedding} is 
+\begin{equation*}
+    \tau\left(\frac{\sqrt{2}}{2}+ i \frac{\sqrt{2}}{2}\right)=\left(\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2}, -\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2} \right).
+\end{equation*}
+
+Let $x_1 = \zeta_8$, $x_2 = \zeta_8^3$, $x_3 = \zeta_8^7$, $x_4 = \zeta_8^5$, so $x_1 = \overline{x_3}$ and $x_2 = \overline{x_4}$ are in conjugate pairs. By definition of canonical space, we have $(x_1, x_2, x_3, x_4) \in H$ is an element of the space. According to the above basis construction, we get the basis $\{h_1, h_2,h_3,h_4\}$ for $H$ from the standard basis of $\R^4$, where
+\begin{align*}
+h_1 &= \frac{\sqrt{2}}{2} (e_1 + e_3), \\
+h_2 &= \frac{\sqrt{2}}{2} (e_2 + e_4),\\
+h_3 &= i\frac{\sqrt{2}}{2} (e_1 - e_3),\\
+h_4 &= i\frac{\sqrt{2}}{2} (e_2 - e_4).    
+\end{align*}
+Hence, the element $(x_1, \dots, x_4) = h_1-h_2+h_3+h_4$ and its conjugate $\overline{(x_1, \dots, x_4)} = h_1-h_2-h_3-h_4$. The complex conjugation operator maps $H$ to itself by flipping the signs of the coefficients of $\{h_{s_1+s_2+1},\dots, h_n\}$ as shown in the example. 
+\end{example}
+
+
+Now we know a number field $K$ is mapped to a canonical space that is isomorphic to $\R^n$, we can defined the notion of geometric norm on the number field $K$ just as we did in $\R^n$. For any element $x \in K$, the \textbf{$L_p$-norm} of $x$ is defined as 
+\reversemarginpar
+\marginnote{\textit{$L_p$-norm}}
+\begin{equation*}
+    ||x||_p = ||\sigma(x)||_p = 
+    \begin{cases}
+     \left( \sum_{i \in [n]} |\sigma_i(x)|^p \right)^{1/p} & \text{ if $p < \infty$},  \\
+    \max_{i \in [n]} |\sigma_i(x)| & \text{ if $p = \infty$}.
+    \end{cases}
+\end{equation*}
+
+\begin{example}
+We use this example to illustrate the $L_p$-norm of a root of unity in a cyclotomic number field. 
+
+Let $\sigma: K(\zeta_n) \rightarrow H$ be the canonical embedding for the nth cyclotomic field. The minimal polynomial of $\zeta_n$ is the nth cyclotomic polynomial $\Phi_n(x)$ which has only complex roots for $n \ge 3$, because the two real roots are not primitive. The complex embeddings are given by $\sigma_i(\zeta_n) = \zeta_n^i$, where $i \in (\Z/n\Z)^*$, so $n = 2s_2 = |(\Z/n\Z)^*|$.
+
+For any nth root of unity $\zeta_n^j \in K$, an embedding $\sigma_i(\zeta_n^j)$ is still a root of unity and hence has magnitude 1. So the $L_P$-norm of an nth root of unity $||\zeta_n^j||_p = n^{1/p}$ for $p < \infty$ and $||\zeta_m^j||_{\infty} = 1$.
+\end{example}
+
+We have specified the canonical embedding of a number field to a space that is isomorphic to $\R^n$. What we are really interested in is how the ring of integers is mapped by the embedding. The following theorem states that the canonical embedding maps $\OO_K$ to a full-rank lattice. Towards the end of this section, we will discuss the minimum distance (or the shortest vector) of this lattice and how the determinant of this lattice $\sigma(\OO_K)$ is related to a quantity of the number field, called the discriminant.
+
+\begin{theorem}
+\label{app thm:rngIntLat}
+\reversemarginpar
+\marginnote{\textit{$\tau(\OO_K)$ is lattice}}
+Let $K$ be an $n$-dimensional number field and $\tau: K \rightarrow V \cong \R^n$ be the embedding of $K$ as defined in Equation \ref{app equation:minkowski embedding}, then $\tau$ maps the ring of integers $\OO_K$ to a full-rank lattice in $\R^n$. 
+\end{theorem}
+
+\begin{proof}
+By definition, a lattice is a free $\Z$-module. Let $\{e_1,\dots,e_n\}$ be an integral basis of $\OO_K$, then every element $x \in \OO_K$ can be written as $x=\sum_{i=1}^n z_i e_i$, where $z_i \in Z$. The image of $x$ under the embedding is $\tau(x)=\sum_{i=1}^n z_i \tau(e_i)$, so $\tau(\OO_K)$ is $\Z$-module generated by $\{\tau(e_1),\dots,\tau(e_n)\}$. It remains to show the set is a basis of $\tau(\OO_K)$, which then leads to the conclusion that it is a free $\Z$-module, hence a lattice. To do so, define the following matrix and prove it has a non-zero determinant
+\begin{equation*}
+N^T = \left(
+\begin{smallmatrix}
+\sigma_1(e_1) & \cdots & \sigma_{r_1}(e_1) & Re(\sigma_{r_1+1}(e_1)) & Im(\sigma_{r_1+1}(e_1)) & \cdots & Re(\sigma_{r_1+r_2}(e_1)) & Im(\sigma_{r_1+r_2}(e_1)) \\
+\vdots & & \vdots & \vdots & \vdots & & \vdots & \vdots \\
+\sigma_1(e_n) & \cdots & \sigma_{r_1}(e_n) & Re(\sigma_{r_1+1}(e_n)) & Im(\sigma_{r_1+1}(e_n)) & \cdots & Re(\sigma_{r_1+r_2}(e_n)) & Im(\sigma_{r_1+r_2}(e_n)) \\
+\end{smallmatrix}
+\right).
+\end{equation*}
+It can be prove that $\det N $ is related to $\det M$, where $M$ is a matrix defined by using the canonical embedding $\sigma$ of $K$. In addition, $\det M \neq 0$, so $\det N \neq 0$. The details are skipped. See the proof of Lemma 10.6.1 on page 65 of Ben Green's book or the proof of Proposition 4.26 on page 80 of Milne's book. 
+\end{proof}
+
+\subsection{Ideals of ring of integers}
+	
+The ring of integers $\OO_K$ in a number field carries a lot of similarities to $\Z$, but it lacks an important property of being a unique factorization domain.
+
+
+\begin{definition}
+An integral domain $D$ is a 
+\reversemarginpar
+\marginnote{\textit{UFD}}
+\textbf{unique factorization domain (UFD)} if every non-zero non-unit element $x \in D$ can be written as a product 
+\begin{equation*}
+    x= p_1 \cdots p_n
+\end{equation*}
+of $0<n<\infty$ irreducible elements $p_i \in D$ uniquely up to reordering of the irreducible elements.
+\end{definition}
+
+For example, $\Z$ is a UFD because every integer can be uniquely factored into prime factors. But the extension $\Z(\sqrt{5})$ is not a UFD, because $6=2 * 3 = (1+\sqrt{-5})(1-\sqrt{-5})$. UFD is essential for cryptography because if we assume factoring a large integer into prime factors is hard, we want to be sure that we are aware of all the factorizations. So it would be assuring if the factorization is unique. In addition, unique factorization implies unique divisibility.
+
+For this reason, we do not work with individual elements in $\OO_K$ but study an enlarged world, the ideals of $\OO_K$, denoted as $\text{Ideals}(\OO_K)$, and prove that they can be uniquely factored into prime ideals. The general context of proving such a property and some other properties of ideals of $\OO_K$ is in a Dedekind domain. 
+\reversemarginpar
+\marginnote{\textit{Dedekind domain}}
+A \textbf{Dedekind domain} is an integral domain in which every non-zero proper ideal factors into a product of prime ideals. The ring of integers $\OO_K$ is just a special case of a Dedekind domain as we will see at the end of this subsection once we have stated that the integral ideals of $\OO_K$ form a UFD. In addition, we introduce fractional ideals of $\OO_K$ and prove that they form a multiplicative group under ideal multiplication. %They are particularly important for RLWE because their images under the canonical embedding are ideal lattices. 
+	
+%The key thing to keep in mind while studying these concepts is that the canonical map sends a fractional ideal of $\OO_K$ (including $\OO_K$ and its integral ideals) to a full-rank lattice in the space $H$ (Proposition 3.5.1 \cite{mukherjee2016cyclotomic}). 
+	
+The RLWE problem is constructed based on ideal lattices, which are the images of the canonical embedding of integral (or fractional) ideals of $\OO_K$ (Proposition 3.5.1 \cite{mukherjee2016cyclotomic}, Proposition 4.26 in J. S. Milne's \textit{Algebraic Number theory}). 
+Since integral and fractional ideals are related by an algebraic integer $d \in \OO_K$ (which is considered as the denominator), RLWE can be defined in either setting. 
+	
+
+\subsubsection{Integral ideals}
+
+We start this section by introducing the notion of ideal in $\OO_K$. The intuition is similar to an ideal in an ordinary ring. Recall that an ideal of a ring is an additive subgroup of the ring that is closed under multiplication by ring elements. Similarly, we can define an ideal of $\OO_K$. 
+	
+\begin{definition}
+Given a number field $K$ and its ring of integers $\OO_K$, an 
+\reversemarginpar
+\marginnote{\textit{Integral ideal}}
+\textbf{integral ideal} (or simply \textbf{ideal}) $I$ of $\OO_K$ is a non-empty (i.e., $I \neq \emptyset$) and non-trivial (i.e., $I \neq \{0\}$) additive subgroup of $\OO_K$ that is closed under multiplication by elements of $\OO_K$, i.e., for any $r \in \OO_K$ and any $x \in I$, we have $rx \in I$. 
+\end{definition}
+
+Since $\OO_K$ is commutative, we do not distinguish between left and right ideal. The above definition is consistent with ideals in ordinary rings, except that the zero ideal $\{0\}$ is excluded in order to define ideal division later. Since $\OO_K$ has a $\Z$-basis, its integral ideals have $\Z$-basis too. In other words, every non-zero integral ideal of $\OO_K$ is a free $\Z$-module. 
+	
+We can define a 
+\reversemarginpar
+\marginnote{\textit{Principle ideal}}
+\textbf{principal ideal} in a similar way as an ideal that is generated by a single element via multiplications with all elements in $\OO_K$. That is, the principle ideal generated by an element $x \in \OO_K$ is 
+\begin{equation*}
+    (x) := \{\alpha x \mid \alpha \in \OO_K\}.
+\end{equation*}
+Given elements $x_1, \dots, x_r \in \OO_K$, the ideal \textbf{generated by} the $x_i$'s is 
+\begin{equation*}
+    (x_1,\dots, x_r) := \left\{\sum_{i \in [r]} \alpha_i x_i \mid \alpha_i \in \OO_K\right\}
+\end{equation*} 
+the set of linear combinations of the $x_i$'s, where the coefficients are taken from $\OO_K$.
+	
+
+We can also define some basics operations on ideals. If $I$ and $J$ are both integral ideals of $\OO_K$, their 
+\reversemarginpar
+\marginnote{\textit{Ideal sum}}
+\textbf{sum} is defined as 
+\begin{align*}
+    I + J := \{x + y \mid x \in I \text{ and } y \in J\},
+\end{align*}
+which is still an ideal in $\OO_K$.\footnote{It can be proved that $I+J$ and $(I \cup J)$ are equivalent.} The sum ideal does not respect the additive structure on $\OO_K$. For example, if $I = J = (1)$, then $I+J= (1) \neq (1+1) = (2)$. The sum of two ideals is not so important, what more important for the following works is the product of two ideal. 
+	
+We would thought that the product set $S=\{xy \mid x \in I \text{ and } y \in J\}$ is also an ideal just like the sum but it is not, because it may not be closed under addition. For this reason, 
+\reversemarginpar
+\marginnote{\textit{Ideal product}}
+the \textbf{product} of two ideals $I$ and $J$ is defined as 
+\begin{align*}
+    IJ := \left\{\sum_{i \in [r]} a_i b_i \mid a_i \in I \text{ and } b_i \in J\right\}. 
+\end{align*}
+It consists of all finite sums of the products of two ideal elements.\footnote{Again, it can be proved that $IJ$ and $(IJ)$ are equivalent.} 
+By grouping all finite sums of products, the set is closed under addition. Closed under multiplication by elements in $\OO_K$ can be easily checked. Since $\OO_K$ is commutative, ideal multiplication is commutative too. 
+	
+\begin{example}
+Given the ring of integers $\OO_K = \Z$ and two of its ideals $I = 2\Z = \{2, 4,6,8,\dots,\}$ and $J = 3\Z=\{3,6,9,12,\dots,\}$, their ideal product is $IJ=\{2\cdot 3, 2\cdot 6,2\cdot 3 + 2\cdot 6,\dots\}$.  
+\end{example}
+	 
+
+We have defined ideal multiplication, it is natural to also define ideal division, provided ideals of $\OO_K$ does not include the zero ideal according to the definition.  
+
+\begin{definition}
+Let $I$ and $J$ be two ideals of $\OO_K$. We say 
+\reversemarginpar
+\marginnote{\textit{Ideal division}}
+$J$ \textbf{divides} $I$, denoted $J \mid I$, if there is an ideal $M \subseteq \OO_K$ such that $I = JM$.
+\end{definition}
+
+The following theorem gives a more intuitive way of thinking about ideal division by relating division with containment. 
+
+\begin{theorem}
+\label{app thm:divCont}
+\reversemarginpar
+\marginnote{\textit{Divisibility $\iff$ containment}}
+Let $I$ and $J$ be two ideals of $\OO_K$. Then $J \mid I$ if and only if $I \subseteq J$. 
+\end{theorem}
+Divisibility implies containment, because if $J\mid I$ then $I=JK\subseteq J$, so $I\subseteq J$. The converse may not be true in general, but is certainly true in these ideals are in the ring of integers. Next, we define prime ideals in $\OO_K$ which is the same as how prime ideals are defined in rings. 
+
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Prime ideal}}
+An ideal $I$ of $\OO_K$ is \textbf{prime} if  
+\begin{enumerate}
+	\item $I \neq \OO_K$ and 
+	\item if $xy \in I$, then either $x \in I$ or $y \in I$. 
+\end{enumerate}
+\end{definition}
+
+The next lemma gives an equivalent definition of prime ideals in terms of other ideals in $\OO_K$. 
+\begin{lemma}
+An ideal $I$ of $\OO_K$ is prime if and only if for ideals $J$ and $K$ of $\OO_K$, whenever $JK \subseteq I$, either $J \subseteq I$ or $K \subseteq I$. 
+\end{lemma}
+By the equivalence relation between division and containment, a prime ideal $I$ can be more intuitively defined as a proper ideal such that whenever $I \mid JK$, either $I \mid J$ or $I \mid K$. This is consistent with how prime numbers are defined in $\Z$.  
+
+An important observation is that in $\OO_K$, prime ideals are also maximal. So we do not introduce maximal ideals separately. Recall that a maximal ideal in a ring is an ideal that is contained in exactly two ideals, i.e, itself and the entire ring. 
+
+\begin{lemma}
+\label{app lm:primeIsMax}
+\reversemarginpar
+\marginnote{\textit{Prime is maximal}}
+In $\OO_K$, all prime ideals are maximal. 
+\end{lemma}
+The proof relies on the results that a commutative ring quotienting by a prime ideal gives an integral domain, quotienting by a maximal ideal gives a field. 
+\begin{proof}
+If $I$ is a prime ideal of $\OO_K$, then $\OO_K / I$ is an integral domain. In addition, the integral domain is finite. This implies that for every $x$ in the integral domain, it satisfies that $x^n = 1$ for some $n$, so $x \cdot (x^{n-1}) = 1$. Hence, every non-zero element in the integral domain has an inverse, which means the quotient ring $\OO_K / I$ is a field. Therefore, $I$ is maximal. 
+\end{proof}
+
+An important property of the ideals of $\OO_K$ is that they can be uniquely factorized into irreducible factors, in this case prime ideals. This is one of the main theorems in the course of Algebraic Number Theory. Note that it is not always true that $\OO_K$ is a unique factorization domain. As we have seen, an counter example is when $K=\Q(\sqrt{-5})$ and $\OO_K=\Z(\sqrt{-5})$, in which $6 = 2 * 3=(1+\sqrt{-5})*(1-\sqrt{-5})$.\footnote{It is also necessary to check that 2, 3, $1+\sqrt{-5}$ and $1-\sqrt{-5}$ are irreducible and are not associates of each other. For more details, see the example on Page 30 of Ben Green's notes on algebraic number theory.}
+
+\begin{theorem}
+\label{app thm:idealsOKUFD}
+\reversemarginpar
+\marginnote{$\text{Ideals}(\OO_K)$ is UFD}
+For an algebraic number field $K$, every non-zero proper ideal $I$ of $\OO_K$ admits a unique factorization
+\begin{equation*}
+    I = P_1 \cdots P_k,
+\end{equation*}
+into prime ideals $P_i$ of $\OO_K$. 
+\end{theorem}
+
+
+\subsubsection{Fractional ideal}
+
+% fractional ideal 
+Another important concept in number fields is fractional ideal. It generalizes integral ideals in a number field, but is not an ideal in the number field or its ring of integers. The essential properties that are useful in proving RLWE are fractional ideals can be uniquely factorized into prime ideals and they form a multiplicative group. We first give a general definition of fractional ideals in an integral domain. We will then refine this definition in a number field. Let $R$ be an integral domain, recall a field of fractions of $R$ is 
+\begin{equation*}
+    Frac(R)=\{(p,q) \in R \times (R\setminus \{0\}) \mid (p,q) \sim (r,s) \iff ps=qr\}.
+\end{equation*}
+It is clear that $Frac(R)$ is an $R$-module and it contains $R$. Given an $R$-module $M$, recall a submodule $N$ of $M$ is a subgroup of $M$ that is closed under scalar multiplication by elements in $R$, that is, $ar \in N$ for any $a \in N$ and any $r \in R$. Now, we can define fractional ideal of an integral domain. 
+
+
+\begin{definition}
+\label{app def:fracIdeal}
+Let $R$ be an integral domain and $Q=Frac(R)$ be the field of fractions. A
+\reversemarginpar
+\marginnote{\textit{Frac ideal}}
+\textbf{fractional ideal} $I$ of $R$ is an $R$-submodule of $Q$ such that there exists a non-zero element $d \in R$ satisfying $dI \subseteq R$. 
+\end{definition}
+
+$I$ is an $R$-submodule of $Q$ implies that $I$ is an (additive) subgroup of $Q$ and it is closed under multiplication by all elements in $R$. The existence of $d \in R$ can be thought as cancelling the denominator of $I$, which is also why $d$ needs to be non-zero. Combining with being an submodule, we have $rI \subseteq R$ is an integral ideal. As we will explain later that a fractional ideal is neither an ideal of $\OO_K$ nor $K$, so some prefer to call them ``fractional ideals in $K$'' while others refer to them as ``fractional ideals of $\OO_K$''. For simplicity, we sometimes refer to them just as fractional ideals without mentioning $\OO_K$ or $K$.
+
+We further refine the definition for our purpose. In the context of a number field, $\OO_K$ is an integral domain and $K=Frac(\OO_K)$ is its field of fractions. By the above definition, a fractional ideal $I$ is an $\OO_K$-submodule of $K$ such that there exists a non-zero element $d \in \OO_K$ satisfying $dI \subseteq \OO_K$. Alternatively, we can just say that $dI$ is an integral ideal, which implies it is closed under addition and multiplication by the ring elements, hence equivalent as being a submodule. 
+\begin{definition}
+\label{app def:fracIdeal2}
+Let $K$ be a number field and $\OO_K$ be its ring of integers. A \textbf{fractional ideal} $I$ of $\OO_K$ is a set such that $dI \subseteq \OO_K$ is an integral ideal for a non-zero $d \in \OO_K$.  
+\end{definition}
+
+Alternatively, given an integral ideal $J \subseteq \OO_K$ and an element $x \in K^{\times}$ (or an invertible element $x \in K$), the corresponding fractional ideal $I$ can be expressed as 
+\begin{equation*}
+I = x^{-1} J := \{x^{-1} a \mid a \in J\} \subseteq K.
+\end{equation*}
+From this expression, it is clearer that the non-zero element $d$ in the above definitions is for cancelling the denominator $x$ of in this expression. Note $x$ is in $K$ but not $\OO_K$ because it needs to be invertible. Since a non-zero integral ideal is a free $\Z$-module and a fractional ideal is related to an integral ideal by an invertible element, it follows that a fractional ideal is a 
+\reversemarginpar
+\marginnote{\textit{Free $\Z$-module}}
+free $\Z$-module too. So it has a $\Z$-basis.   
+
+Note that \textbf{a fractional ideal is not an ideal of $R$} (unless it is contained in $R$), because it is not necessarily a subset of the integral domain $R$. For example, as we will see in the following example, $\frac{5}{4}\Z \not\subseteq \OO_K$ is a fractional ideal of $\OO_K$. \textbf{Nor it is an ideal of the field of fractions $Frac(R)$}, because $Frac(R)$ is a field which has only zero and itself as ideals. 
+
+\begin{example}
+Let $K= \Q$ and $\OO_K= \Z$. Clearly, $\Q$ is a $\Z$-module. $I = \frac{5}{4}\Z$ is a $\Z$-submodule of $\Q$, because $I$ is an additive subgroup of $\Q$ and for all $x \in \Z$, we have $xI = I$. There exists an integer $4\in \Z$ such that $4 \cdot \frac{5}{4}\Z = 5\Z \subseteq\Z$ is an ideal. So  $I = \frac{5}{4}\Z$ is a fractional ideal of $\Z$. Alternatively, it can be expressed as $4^{-1}5\Z \subseteq \Q$, where $5\Z$ is an ideal of $\Z$.
+
+A counter example is when $I=\Z[\frac{1}{2}]$. This is an $\OO_K$-submodule of $K=\Q$, but does not exists a denominator $d \in \OO_K$ such that $dI \subseteq \OO_K$ is an ideal. 
+\end{example}
+
+
+The product of two fractional ideals can be defined the same as the product of two 
+\reversemarginpar
+\marginnote{\textit{Product}}
+integral ideals. That is, if $I$ and $J$ are both fractional ideals, then their product consists of all the finite sums $\sum_{i \in [n]} a_i b_i$, where $a_i \in I$ and $b_i \in J$. It is easy to check that the product of two fractional ideals is still a fractional ideal. 
+
+
+To reach the conclusion that fractional ideals form a multiplicative group, it remains to show that every fractional ideal has an inverse. This is done via the following two lemmas. The first lemma proves that every prime ideal of $\OO_K$ has an inverse. The second lemma proves that every non-zero integral ideal of $\OO_K$ has an inverse. 
+
+\begin{lemma}
+\reversemarginpar
+\marginnote{\textit{Prime ideal inverse}}
+If $P$ is a prime ideal in $\OO_K$, then $P$ has an inverse $P^{-1} = \{a \in K \mid a P \subseteq \OO_K\}$ that is a fractional ideal.
+\end{lemma}
+
+\begin{proof}
+Since $\OO_K$ is a ring, it is closed under multiplication. This implies $\OO_K \subseteq P^{-1}$, so $P^{-1}$ is not an integral ideal of $\OO_K$. We want to show $P^{-1}$ is a fractional ideal of $\OO_K$. It is not difficult to see that $P^{-1}$ is a $\OO_K$-submodule of $K$. In addition, there is a $b \in \OO_K$ such that $bP^{-1}$ is an integral ideal of $\OO_K$, so by definition $P^{-1}$ is a fractional ideal of $\OO_K$. 
+
+It remains to prove that $P^{-1}$ indeed is an inverse of $P$. We will not state the proof here. For details, see \textit{Proof of Theorem 3.1.8} on Page 45 in William Stein's \textit{Algebraic Number Theory}.
+\end{proof}
+
+\begin{example}
+In the number field $K = \Q$, let $P = (2) = \{2, 4, 6, \dots\}$ be a prime ideal in $\OO_K = \Z$. Then its inverse $P^{-1} = \{\Z, \frac{\Z}{2}, \frac{\Z}{4}, \frac{\Z}{6}, \dots\}$ is a fractional ideal of $\Z$. 
+\end{example}
+
+Since a fractional ideal and the corresponding integral ideal can be obtained from each other, we can express a fractional ideal as $I=yJ$ for an integral ideal $J$ and an invertible element $y=x^{-1}$. To prove $I$ has an inverse $(yJ)^{-1}$, it is sufficient to show that the integral ideal $J$ has an inverse, because the principal ideal $(y)$ has an inverse $(1/y)$. 
+
+\begin{lemma}
+\reversemarginpar
+\marginnote{Integral ideal inverse}
+Every non-zero integral ideal of $\OO_K$ has an inverse. 
+\end{lemma}
+\begin{proof}
+Prove by contradiction. Assume not every non-zero integral ideal of $\OO_K$ has an inverse. Let $I$ be the maximal non-zero integral ideal of $\OO_K$ that has no inverse. $P$ is still a prime ideal of $\OO_K$, then $I \subseteq P$. Multiplying both sides by $P^{-1}$, we get $I \subseteq P^{-1} I \subseteq P^{-1} P = \OO_K$. The key here is to show that $I \neq P^{-1} I$. Since $I$ is an integral ideal of $\OO_K$, the equality holds if $P^{-1} \subseteq \OO_K$ because an ideal is closed by multiplication with ring elements. But we already know from the above lemma that the inverse of a prime ideal is a fractional ideal of $\OO_K$ that is not in the ring, so $\OO_K \subseteq P^{-1}$. Hence, the equality cannot hold, that is we must have $I \subsetneq P^{-1} I \subseteq P^{-1} P = \OO_K$. Since $I$ is the maximal integral ideal in $\OO_K$ that does not have an inverse, the ideal $P^{-1} I$ must have an inverse $J$ such that $(P^{-1} I)J=\OO_K$, so $(P^{-1} J)I=\OO_K$ and $P^{-1}J$ is an inverse of $I$. 
+\end{proof}
+
+The two lemmas together prove that a fractional ideal has an inverse. 
+See \textit{Proof of Theorem 3.1.8} on Page 46 in William Stein's \textit{Algebraic Number Theory} for more detail. To be more precise, the inverse 
+\reversemarginpar
+\marginnote{\textit{Frac ideal inverse}}
+of a fractional ideal $I$ has the form 
+\begin{equation}
+\label{app equ:fracIdInv}
+    I^{-1} = \{x \in K \mid xI \subseteq \OO_K\}.
+\end{equation}
+Given fractional ideals $I$ and $J$, if $IJ=(x)$ is a \textbf{principal fractional ideal}\footnote{Since both $I$ and $J$ are fractional ideals, their product is also a fractional ideal, which is not necessary an integral ideal, so it is named principal fractional ideal to differentiate it from a principal ideal.}, then its inverse is $I^{-1}=\frac{1}{x}J$.
+It can be proved that this inverse is also a fractional ideal and it is unique for the given fractional ideal $I$. See Conrad's lecture notes on ``Ideal Factorization'' (Definition 2.5, Theorem 2.7 and Theorem 4.1). 
+
+\begin{theorem}
+\label{app thm:fracIdealGroup}
+\reversemarginpar
+\marginnote{\textit{Multiplicative group}}
+The set of fractional ideals of the ring of integers $\OO_K$ of a number field $K$ is an abelian group under multiplication with the identity element $\OO_K$. 
+\end{theorem}
+
+The same theorem is also stated in \cite{alaca2004introductory} in Theorem 8.3.4. Since fractional ideals include integral ideals, these two theorems are identical. 
+\begin{theorem}
+Let $K$ be an algebraic number field and $\OO_K$ be the ring of integers of $K$ . Then the set of all non-zero integral and fractional ideals of $\OO_K$ forms an abelian group with respect to multiplication.
+\end{theorem}
+
+Finally, we come to another important result of this section, which states that a fractional ideal can be uniquely factored into the product of prime ideals. 
+
+
+\begin{theorem}
+\reversemarginpar
+\marginnote{\textit{Unique factorization}}
+If $I$ is a fractional ideal of $\OO_K$ then there exits prime ideals $P_1, \dots, P_n$ and $Q_1, \dots, Q_m$, unique up to order, such that 
+\begin{equation*}
+    I = (P_1 \cdots P_n)(Q_1 \cdots Q_m)^{-1}.
+\end{equation*}
+\end{theorem}
+The theorem follows from the fact that a fractional ideal $I=J/a$, where $J$ is an integral ideal and $a \in \OO_K$. Since both $J$ and $(a)$ are ideals of $\OO_K$, Theorem \ref{app thm:idealsOKUFD} implies they have unique prime ideal factorization, so the theorem holds.
+
+
+\subsubsection{Chinese remainder theorem}
+\label{app subsubsec:crt}
+Given that integral ideals form a UFD, the \textbf{Chinese Remainder Theorem (CRT)} carries over from rational integers to integral ideals of $\OO_K$. In this subsection, we state CRT in the general context of Dedekind domain, in which the ring of integers $\OO_K$ is a special case. This is to get the reader to be familiar with CRT in general, which will be used in latticed-based cryptography and homomorphic encryption. 
+
+The classical form of CRT states that for integers $n_1, \dots, n_k$ that are pairwise 
+\reversemarginpar
+\marginnote{\textit{Classical CRT}}
+coprime and integers $a_1, \dots, a_k$ such that $0 \le a_i < n_i$, the system of congruences 
+\begin{align*}
+    x &\equiv a_1 \bmod n_1 \\
+    x &\equiv a_2 \bmod n_2 \\
+    \vdots \\
+    x &\equiv a_k \bmod n_k
+\end{align*}
+has a unique solution $x$ up to congruent modulo $N = \prod_{i=1}^n n_i$, that is, if $y$ is another solution then $x \equiv y \bmod N$.
+
+Similarly, CRT can solve the problem of polynomial interpolation. Given values $x_i, \dots, x_n, y_1, \dots, y_n \in \R$, there is a unique polynomial $p(x)$ satisfies 
+\begin{align*}
+    p(x_1) &=y_1 \\
+    p(x_2) &= y_2 \\
+    \vdots \\
+    p(x_n) &= y_n.
+\end{align*}
+The problem can be solved in terms of CRT as finding a unique polynomial $p(x)$ that satisfies 
+\begin{align*}
+    p(x) & \equiv y_1 \bmod x-x_1\\
+    p(x) &\equiv y_2  \bmod x-x_2\\
+    \vdots \\
+    p(x) &\equiv y_n  \bmod x-x_n.
+\end{align*}
+We know from previous sections that $p(x) -y_i\equiv 0 \bmod x-x_i$, which can also be expressed in quotient as $(p(x)-y_i) / (x-x_i)$, is the  extension field $\Q(x_i)$ over $\Q$ that contains the roots of $p(x) -y_i$ and $x_i$. % \kl{Why need this paragraph?}
+
+A more abstract version of CRT states that if the $n_i$'s are pairwise coprime, the map 
+\reversemarginpar
+\marginnote{\textit{CRT in rings}}
+\begin{equation*}
+    x \bmod N \mapsto (x \bmod n_1, \dots, x\bmod n_k)
+\end{equation*}
+defines an isomorphism 
+\begin{equation*}
+    \Z / N\Z \cong \Z / n_1 \Z \times \cdots \times \Z / n_k \Z
+\end{equation*}
+between the ring of integers modulo $N$ and the direct product of the $k$ rings of integers modulo $n_i$. 
+
+To generalize CRT to the ring of integers $\OO_K$, we define coprime ideals in $\OO_K$. Since ideals in $\OO_K$ can be uniquely factorized, it makes sense to talk about coprimality.
+
+\begin{definition}
+Let $I$ and $J$ be two integral ideals in $\OO_K$. Then $I$ and $J$ are \textbf{coprime} if they do
+\reversemarginpar
+\marginnote{\textit{Coprime ideals}}
+not have any prime factors in common. That is, there is no prime ideal dividing both of them. 
+\end{definition}
+
+This definition relies on the notion of common factors of two ideals. 
+
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{GCD of ideals}}
+Let $I$ and $J$ be integral ideals of $\OO_K$, their \textbf{greatest common divisor (GCD)} $\gcd(I, J) = I+J$. 
+\end{definition}
+
+By definition of ideal GCD, we can re-define ideal coprimality as the next. 
+
+\begin{definition}
+Two ideals $I$ and $J$ in $\OO_K$ are \textbf{coprime} if $I+J=\OO_K$.
+\end{definition}
+In other words, two integral ideals are coprime if their sum is the entire ring of integers.
+For example, the integral ideals $(2)$ and $(3)$ in $\Z$ are coprime because $(2)+(3)=(1)=\Z$. But the integral ideals $(2)$ and $(4)$ are not coprime because $(2)+(4)=(2) \neq \Z$. 
+
+Now we have defined coprime ideals in $\OO_K$, we can state the Chinese Remainder Theorem in Dedekind domains. 
+
+
+\begin{theorem}
+\reversemarginpar
+\marginnote{\textit{CRT in $\OO_K$}}
+Let $D$ be a Dedekind domain.
+\begin{enumerate}
+    \item Let $P_1,\dots, P_k$ be distinct prime ideals in $D$ and $b_1,\dots, b_k$ be positive integers. Let $\alpha_1,\dots,\alpha_k$ be elements of $D$. Then there exists an $\alpha \in  D$ such that  for all $i \in [1,k]$, it satisfies $\alpha \equiv \alpha_i \bmod P_i^{b_i}$.
+    
+    \item Let $I_1,\dots, I_k$ be pairwise coprime ideals of $D$ and $\alpha_1, \dots, \alpha_k$ be elements of $D$. Then there exists an $\alpha \in D$ such that for all $i \in [1, k]$, it satisfies $\alpha \equiv \alpha_i \bmod I_i$.
+\end{enumerate} 
+
+\end{theorem}
+
+Another way of stating the second point above that is similar to the CRT in rings is the next theorem.
+
+\begin{theorem}
+   Let $I_1, \dots, I_k$ be pairwise corprime ideals in a Dedekind domain $D$ and $I = \prod_{i=1}^k I_i$. Then the map 
+   \begin{equation*}
+       D \rightarrow (D / I_1, \dots, D/I_k)
+   \end{equation*}
+   induces an isomorphism 
+   \begin{equation*}
+       D / I \cong D / I_1 \times \cdots \times D / I_k.
+   \end{equation*}
+\end{theorem}
+
+To prove CRT in $\OO_K$, first prove the map is surjective. Then prove that the kernel of the map is $I_1 \cap \cdots \cap I_k$, which can be shown to be identical to $\prod_{i=1}^k I_i$ under the assumption that they are pairwise coprime. Then it follows from the First Isomorphism Theorem. 
+
+The connection of this subsection to the RLWE result are the following two lemmas. The first lemma shows that given two ideals $I, J \subseteq R$ of a Dedekind domain $R$ (i.e., a ring of integers $\OO_K$ of a number field $K$), it possible to construct another ideal that is coprime with either one of them. 
+
+\begin{lemma}
+\label{app lm:coprimeIdeals}
+If $I$ and $J$ are non-zero integral ideals of a Dedekind domain $R$, then there exists an element $a \in I$ such that $(a)I^{-1} \subseteq R$ is an integral ideal coprime to $J$. 
+\end{lemma}
+
+\begin{proof}
+Since $a \in I$, the principal ideal $(a) \subseteq I$. By Theorem \ref{app thm:divCont}, we have $I \mid (a)$, that is, there is an ideal $M \subseteq R$ such that $IM=(a)$, so $M=(a)I^{-1} \subseteq R$ is an ideal of $R$. We skip the proof of coprimality. %because I don't fully understand. 
+See Lemma 5.5.2 in \cite{stein2012algebraic}.
+\end{proof}
+
+The element $a \in I$ can be efficiently computable using CRT in $\OO_K$. Hence, given two ideals in $R$, we can efficiently construct another one that is coprime with either one of them. This corresponds to Lemma 2.14 in \cite{lyubashevsky2010ideal}. The next lemma is essential in the reduction from K-BDD problem to RLWE. 
+
+% state the lemma according to lemma 2.15 lyubashevsky2010ideal, which is a special case of prop 5.2.4 in stein2012algebraic.
+\begin{lemma}
+Let $I$ and $J$ be ideals in a Dedekind domain $R$ and $M$ be a fractional ideal in the number field $K$. Then there is an isomorphism 
+\begin{align*}
+    M/JM \cong IM/IJM.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+Given ideals $I,J\subseteq R$, by Lemma \ref{app lm:coprimeIdeals} we have $tI^{-1} \subseteq R$ is coprime to $J$ for an element $t \in I$. Then we can define a map 
+\begin{align*}
+    \theta_t: K &\rightarrow K \\
+    u &\mapsto tu.
+\end{align*}
+This map induces a homomorphism 
+\begin{align*}
+    \theta_t: M \rightarrow IM/IJM.
+\end{align*}
+First, show $ker(\theta_t)=JM$. Since $\theta_t(JM)=tJM \subseteq IJM$, then $\theta_t(JM)=0$. Next, show any other element $u \in M$ that maps to 0 is in $JM$. To see this, if $\theta_t(u)=tu=0$, then $tu \in IJM$. To use Lemma \ref{app lm:coprimeIdeals}, we re-write it as $(tI^{-1}) (uM^{-1})\subseteq J$. Since $tI^{-1}$ and $M$ are coprime, we have $uM^{-1}\subseteq J$, which implies $u\subseteq JM$. Therefore, $ker(\theta_t)=JM$ and
+\begin{align*}
+    \theta_t: M/JM \rightarrow IM/IJM
+\end{align*}
+is injective. 
+
+Second, show the map is surjective. That is, for any $v \in IM$, its reduction $v \mod IJM$ has a preimage in $M/JM$. Since $tI^{-1}$ and $J$ are coprime, by CRT we can compute an element $c \in tI^{-1}$ such that $c \equiv 1 \bmod J$. Let $a = cv \in tM$, then $a-v=cv-v=v(c-1) \in IJM$. Let $w=a/t \in M$, then $\theta_t(w)=t (a/t)=a \equiv v \bmod IJM$. Hence, any arbitrary element $v \in IM$ satisfies the preimage of $v \bmod IJM$ is $w \bmod IM$. 
+\end{proof}
+
+In the hardness proof of RLWE as will be shown in the next section, we let $M=R$ or $M=\dual{I}=I^{-1}\dual{R}$ and $J=(q)$ for a prime integer $q$, then the isomorphism becomes 
+\begin{align*}
+    R/(q)R &\cong I/(q)I \text{ or } \\
+    \dual{I} / (q)\dual{I} &\cong \dual{R} / (q)\dual{R}.
+\end{align*}
+
+
+
+
+	
+\subsection{Trace and Norm}
+
+As we have built a connection between a number field and a Euclidean space, we can relate more features of a Euclidean space to that of a number field. In this subsection, we will introduce two quantities, trace and norm, of elements in a number field. These quantities are useful to calculate the discriminant and determinant of elements in a number field. 
+Recall that for a linear transformation $\phi:V \rightarrow V$ from a vector space $V$ to itself, we can write $\phi$ in its matrix representation $[\phi]$ by applying $\phi$ to a basis of $V$. That is, for each $e_j \in \{e_i\}_{i \in [n]}$ in a basis of $V$, we have $\phi(e_j) = \sum_{i \in [n]} a_{ij} e_i$ is the linear combination of the basis, so $[\phi] = (a_{ij})$ is the coefficient matrix. With this matrix representation of the linear map, we can 
+%\reversemarginpar
+%\marginnote{\textit{Trace and determinant of linear map}}
+define its trace and determinant like in the context of linear algebra. 
+
+\begin{example}
+Let $\phi: \C \rightarrow \C$ be the complex conjugation. Take the basis $\{1, i\}$ for the complex space $\C$. Apply the complex conjugation to this basis, we get 
+\begin{align*}
+    \phi(1) &= 1 + 0 \cdot i, \\
+    \phi(i) &= 0\cdot 1 + (-1) \cdot i.
+\end{align*}
+So the matrix representation of the complex conjugation is 
+$[\phi] = \begin{pmatrix}
+  1 & 0\\ 
+  0 & -1
+\end{pmatrix}$. 
+Each column $j$ consists of the coefficients of $\phi(e_j)$. 
+\end{example}
+
+Since a number field $K$ is a $\Q$-vector space, we can speak of linear transformations on $K$ too. For any element $\alpha \in K$, we can define a map 
+$m_{\alpha}(x) = \alpha x$  as a multiplication by $\alpha$ for all $x \in K$. It is easy to see that $m_{\alpha}$ is also a linear map from $K$ to itself, so there is a matrix representation of this linear map $m_{\alpha}$. 
+
+\begin{example}
+Let $K = \Q(\sqrt{2})$ be a number field with a basis $\{1, \sqrt{2}\}$. For $a, b \in \Q$, we have an element $\alpha = a + b\sqrt{2} \in K$ and its associated linear map $m_{\alpha}$. Apply this map to the basis of $K$, we get 
+\begin{align*}
+    m_{\alpha}(1) &= a \cdot 1 + b \cdot \sqrt{2},  \\
+    m_{\alpha}(\sqrt{2}) &= 2b\cdot 1 + a \cdot  \sqrt{2}.
+\end{align*}
+So the matrix representation of the linear map is 
+$[m_{\alpha}] = \begin{pmatrix}
+  a & 2b\\ 
+  b & a
+\end{pmatrix}$. 
+\end{example}
+
+
+Now, we can define the trace and norm on a number field which will appear in the RLWE problem.
+\begin{definition}
+\label{app def:trcNorm}
+The \textbf{trace} and \textbf{norm} of an element $\alpha$ in a number field $K$ are defined as 
+\reversemarginpar
+\marginnote{\textit{Trace and norm in $K$}}
+\begin{align*}
+    Tr_{K \setminus \Q}&: K \rightarrow \Q \\%\text{  s.t.  }  
+    Tr_{K \setminus \Q}(\alpha) &= Tr([m_{\alpha}]) \in \Q, \\
+    N_{K \setminus \Q}&:K \rightarrow \Q \\%\text{ s.t. } 
+    N_{K \setminus \Q}(\alpha) &= \det([m_{\alpha}]) \in \Q.
+\end{align*}
+\end{definition}
+
+\begin{example}
+In the above example, the trace and norm of $m_{\alpha}$ are the trace and determinant of its matrix representation, i.e., $2a$ and $a^2 - 2b^2$, respectively. 
+\end{example}
+
+It is also possible to define trace and norm using the canonical embedding that was introduced in the previous section. This is due the the following theorem which states a connection between these two quantities and automorphisms in the Galois group of a general field extension. 
+
+\begin{theorem}
+If $E/F$ is a finite Galois extension, then the trace and norm of an element $\alpha \in E$ are 
+\begin{align*}
+    Tr_{E/F}(\alpha) &= \sum_{\sigma \in Gal(E/F)} \sigma(\alpha) \\
+    N_{E/F}(\alpha) &= \prod_{\sigma \in Gal(E/F)} \sigma(\alpha). 
+\end{align*}
+\end{theorem}
+The intuition is that when the extension field $E$ is Galois, each automorphism $\sigma(\alpha)$ in the Galois group is an eigenvalue of the linear transformation $m_{\alpha}$. Recall from linear algebra that the trace and determinant of a square matrix are the sum and product of its eigenvalues respectively. The connection with the canonical embedding is due to the following two observations:  
+\begin{enumerate}
+    \item the number field $K = \Q(r)$ is a Galois extension over $\Q$,
+    \item each automorphism $\sigma_i \in Gal(E/F)$ in the Galois group is correspond to an element in the image of the canonical embedding $\sigma: K \rightarrow H$ in Definition \ref{app def:canEmbd}. 
+\end{enumerate}
+\noindent This gives rise to the following definitions of trace and norm of an element in a number field in terms of the canonical embedding, which appear in some books too. 
+
+\begin{definition}
+\label{app def:trcNorm2}
+Given a canonical embedding of a number field $K$
+\begin{align*}
+    \sigma: K &\rightarrow \R^{s_1} \times \C^{2s_2} \\
+    \sigma(\alpha) &\mapsto (\sigma_1(\alpha), \dots, \sigma_n(\alpha)),
+\end{align*}
+the \textbf{trace} and \textbf{norm} of an element $\alpha \in K$ are defined as 
+\reversemarginpar
+\marginnote{\textit{Trace and norm by canonical embedding}}
+\begin{align*}
+    Tr_{K \setminus \Q}&: K \rightarrow \Q \\%\text{  s.t.  }  
+    Tr_{K/\Q}(\alpha) &= \sum_{i \in [n]} \sigma_i(\alpha), \\
+    N_{K \setminus \Q}&: K \rightarrow \Q \\%\text{ s.t. } 
+    N_{K / \Q}(\alpha) &= \prod_{i \in [n]} \sigma_i(\alpha). 
+\end{align*}
+\end{definition}
+
+\begin{example}
+In the same example where $K = \Q(\sqrt{2})$ and $\alpha = a + b\sqrt{2}$, the minimal polynomial of $\alpha$ over $\Q$ is $f(x) = (\frac{x-a}{b})^2 - 2$, which has two roots $ a \pm b \sqrt{2}$. So the canonical embedding $\sigma$ of $K$ maps $\alpha$ to each of these two roots. Hence, the trace of $\alpha$ is $Tr(\alpha)=(a+b\sqrt{2})+(a-b\sqrt{2}) = 2a$ and the norm is $N(\alpha)=(a+b\sqrt{2})(a-b\sqrt{2}) = a^2 - 2b^2$,  which are consistent with the results in the above example. 
+\end{example}
+
+Both definitions imply that trace is additive and norm is multiplicative, that is, $Tr(x+y) = Tr(x)+Tr(y)$ and $N(xy)=N(x)N(y)$. In addition, Definition \ref{app def:trcNorm2} entails that
+\begin{align}
+\label{app equ:trace}
+    Tr(xy) = \sum \sigma_i(xy) = \sum \sigma_i(x) \sigma_i(y) = \langle \sigma(x), \overline{\sigma(y)} \rangle.
+\end{align}
+The second equality is due to the fact that each $\sigma_i$ is a homomorphism. The last equality is by definition of the inner product between complex vectors. %For complex vectors $x$ and $y$, their inner product $\langle x, y\rangle = \sum_i x_i \overline{y_i}$. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Ideal lattices}
+
+% \kl{minimum distance of the ideal lattice, related to discriminant of K, upper and lower bounds of minimum distance of ideal lattice, see lemma 2.9 \citep{lyubashevsky2010ideal}.}
+\iffalse
+Recall that a canonical embedding $\sigma$ of an algebraic number field $K$ of degree $n$ to the canonical space $H$ is
+\begin{align*}
+    \sigma: K &\rightarrow H \cong \R^{s_1} \times \C^{2s_2} \subseteq \C^n \\
+    \sigma(r) &\mapsto \left(\sigma_1(r), \dots, \sigma_{s_1}(r), \sigma_{s_1+1}(r),\dots, \sigma_n(r)\right),
+\end{align*}
+where $\sigma_{s_1 + j}(r) = \overline{\sigma_{s_1 + s_2 + j}(r)}$ are conjugate pairs for all $j \in [s_2]$ that correspond to the complex embeddings into $H$.
+
+\fi 
+
+
+
+%We first state the main result of this section, which explicitly states the determinant of an ideal lattice. We defer the proof till the end of this section. The reader can refer to Proposition 4.26 in J. S. Milne's book or Corollary 10.6.2 in Ben Green's book. 
+
+To start off this section, we state below some results in order to give some insights about the motivation of studying how ring of integers and its ideals are embedded in $\R^n$.
+
+\begin{proposition}
+\label{app prop:small norm}
+\reversemarginpar
+\marginnote{\textit{Small norm element}}
+Let $K$ be a number field and $I$ be an integral ideal of $\OO_K$. Then there is some element $x \in I$ such that $|N_{K/\Q}(x)| \le M_K N(I)$.
+\end{proposition}
+Here, $M_K$ is the \textbf{Minkowski constant} defined as $M_K=\left(\frac{4}{\pi}\right)^{r_2} \frac{n!}{n^n}\sqrt{|\Delta_K|}$, where $n$ is the degree of $K$ and also the number of embeddings of $K$ with $n=r_1+2r_2$ for $r_1$ real embeddings and $r_2$ pairs of complex embeddings. $\Delta_K$ is the discriminant of the number field $K$, which will be introduced later.  
+
+\begin{theorem}
+\label{app thm:min 1st}
+\reversemarginpar
+\marginnote{\textit{Minkowski 1st Theorem}}\index{Minkowski}
+Let $L$ be an $n$-dimensional lattice and $B\subseteq \R^n$ be a centrally symmetric, compact, convex body. Suppose $Vol(B) \ge 2^n \det(L)$, then $B$ contains a non-zero lattice vector of $L$.
+\end{theorem}
+
+To prove Proposition \ref{app prop:small norm}, it uses results from lattice theory and Theorem \ref{app thm:min 1st}. Given the canonical embedding $\sigma$ maps $K$ to a space isomorphic to $\R^n$, the first step is to prove $\OO_K$ is associated with a lattice in $\R^n$ and so are the ideals of $\OO_K$. Then it left to prove that the lattice associated with an ideal intersects with a bounded convex body in $\R^n$ by Theorem \ref{app thm:min 1st}, provided certain parameter conditions are satisfied. The first step is our focus in this section, so we do not discuss the second step.
+
+Recall a canonical embedding $\sigma:K\rightarrow H \cong \R^n$ gives rise to another embedding $\tau:K \rightarrow V \cong \R^n$ as defined in Equation \ref{app equation:minkowski embedding}, which maps the ring of integers $\OO_K$ to a full-rank lattice as stated in Theorem \ref{app thm:rngIntLat}. This implies that the embedding $\tau$ maps a fractional (integral) ideal of $\OO_K$ to a full-rank lattice too.\footnote{See Corollary 10.6.2, page 65, Ben Green's book or Lemma 7.1.8, page 81 \citep{stein2012algebraic}.} We give a name of such a lattice. 
+
+\begin{definition}
+The embedding $\tau:K\rightarrow V$ maps a fractional ideal of the ring of integers $\OO_K$ to a full-rank lattice, called the \textbf{ideal lattice}. 
+\reversemarginpar
+\marginnote{Ideal lattice}
+\end{definition}
+
+For the interest of building lattice-based cryptosystems, we study ideal lattices and their determinants. But for a general case, we state the next theorem. 
+
+\begin{theorem}
+\label{app thm:rngIntDet}
+Let $\tau:K \rightarrow V$ be the embedding of the $n$-dimensional number field $K$ as defined in Equation \ref{app equation:minkowski embedding}. Then $\tau(\OO_K)$ is a full-rank ideal lattice in $\R^n$ and its determinant satisfies 
+\reversemarginpar
+\marginnote{$\det(\tau(\OO_K))$}
+\begin{equation*}
+    \det(\tau(\OO_K)) = \frac{1}{2^{r_2}}\sqrt{|\Delta_K|}.
+\end{equation*}
+\end{theorem}
+
+Since we have proved in Theorem \ref{app thm:rngIntLat} that $\tau(\OO_K)$ is a full-rank lattice in $\R^n$, it remains to prove its determinant. There are two new quantities in the theorem that have not been introduced, the discriminant $\Delta_K$ of the number field $K$ and the norm $N(I)$ of an ideal I $\subseteq \OO_K$. So we delay the proof till the end of this subsection.
+
+Recall from Section \ref{section:lattice theory} that an $n$-dimensional lattice $L$ is similar to a vector space $\R^n$ but with only discrete vectors. It is isomorphic to the group $(\Z^n,+)$. It shares many properties with $\R^n$ such as having a basis $\{v_1, \dots, v_n\}$. The determinant of a lattice is the size of its fundamental domain that is surrounded by its basis. This gives rise to the following equality 
+\begin{equation*}
+    \det(L) = Vol(F)=|\det(B)|,
+\end{equation*}
+where $F$ is the fundamental domain and $B$ is a basis matrix of $L$. An useful observation is that the determinant is an invariant quantity under the choice of a basis, because any two bases of $L$ are related by a unimodular matrix. 
+	
+Let $K$ be an algebraic number field of degree $n$ and $\sigma_i: K \rightarrow \C$ be a field homomorphism for all $i \in [n]$. For the elements $x_1, \dots, x_n \in K$, define the $n$ by $n$ matrix $M$ to be the linear map where $M_{ij} = \sigma_i(x_j)$, that is,
+\begin{equation*}
+M = 
+\begin{pmatrix}
+\sigma_1(x_1) & \sigma_1(x_2) & \cdots & \sigma_1(x_n) \\
+\sigma_2(x_1) & \sigma_2(x_2) & \cdots & \sigma_2(x_n) \\
+\vdots & \vdots & \cdots & \vdots \\
+\sigma_n(x_1) & \sigma_n(x_2) & \cdots & \sigma_n(x_n) 
+\end{pmatrix}.
+\end{equation*}
+It can be proved that the matrix is always non-singular if the elements $\{x_1, \dots, x_n\}$ form a basis of $K$ over $\Q$ (Lemma 1.7.1 Ben Green's \textit{Algebraic Number Theory}). Without loss of generality, assume $M=M(e_1,\dots,e_n)$ for a basis $\{e_1,\dots,e_n\}$ of a $n$-dimensional number field $K$. 
+
+
+\begin{definition}
+Let $K$ be an $n$-dimensional number field with a basis $\{e_1, \dots, e_n\}$ and
+\reversemarginpar
+\marginnote{\textit{Element discriminant}}
+$M$ be the matrix defined above. The \textbf{discriminant of the elements} is  
+\begin{equation*}
+    \text{disc}_{K / \Q}(e_1, \dots, e_n) = \det (M) ^2.
+\end{equation*}
+\end{definition}
+
+Alternatively, the discriminant of elements in $K$ can be defined by their traces, because 
+\begin{align*}
+    \text{disc}_{K / \Q}(e_1, \dots, e_n) = \det (M)^2 = \det(M^T M)
+\end{align*}
+and the matrix entry $(M^T M)_{ij}=\sum_k \sigma_k(e_i) \sigma_k(e_j) = \sum_k \sigma_k(e_i e_j) = Tr_{K / \Q}(e_i e_j)$ as $\sigma_i$ is a homomorphism. Therefore, the discriminant of number field elements is equal to the determinant of the trace matrix as stated next in the equivalent definition. 
+
+\begin{definition}
+Let $K$ be an $n$-dimensional number field with a basis $\{e_1, \dots, e_n\} \in K$. The \textbf{discriminant of the elements} is  
+\begin{equation*}
+    \text{disc}_{K / \Q}(e_1, \dots, e_n) = \det \left( (Tr_{K / \Q}(e_i e_j))_{ij} \right).
+\end{equation*}
+	
+\end{definition}
+
+From the previous section, we know that the trace of an element is a rational number, so the discriminant is also a rational number. Note although it is defined as the square of a matrix determinant, discriminant can be negative as complex numbers are involved. From the discriminant of basis elements and the integral basis of a number field $K$, we can define the discriminant of $K$. 
+
+\iffalse
+Next, we define the discriminant of an ideal. 
+	
+\begin{definition}
+Let $K$ be a number field of degree $n$ and $I$ be a non-zero ideal of $\OO_K$ \reversemarginpar
+\marginnote{Ideal discriminant}
+with $B=\{b_1, \dots, b_n\}$ being a basis of $I$. The \textbf{discriminant} of the ideal $I$ is 
+\begin{equation*}
+    D(I) = \text{disc}(b_1, \dots, b_n).
+\end{equation*}
+\end{definition}
+\fi 
+
+\begin{definition}
+Let $K$ be an $n$-dimensional number field and $\{e_1, \dots, e_n\}$ be an
+\reversemarginpar
+\marginnote{\textit{$\Delta(K)$}}
+integral basis of $K$. The \textbf{discriminant of the number field} $K$ is 
+\begin{equation*}
+	\Delta_K = \text{disc}_{K/\Q}(e_1, \dots, e_n)=\det \left(( Tr_{K / \Q}(e_i e_j))_{ij} \right) = \det (M)^2.
+\end{equation*}
+\end{definition}
+
+The discriminant loosely speaking measures the size of the ring of integers $\OO_K$ in the number field $K$ and it is invariant under the choice of an integral basis, which is the same as the determinant of a lattice. This can be seen from the following Lemma and corollary. 
+
+\begin{lemma}
+Suppose  $x_1, \dots, x_n, y_1, \dots, y_n \in K$ are elements in the number field and they are related by a transformation matrix $A$, then 
+\begin{equation*}
+    \text{disc}_{K / \Q}(x_1, \dots, x_n) = det (A)^2 \text{disc}_{K / \Q}(y_1, \dots, y_n).
+\end{equation*}
+\end{lemma}
+
+\begin{corollary}
+\reversemarginpar
+\marginnote{\textit{Invariant $\Delta(K)$}}
+Suppose $\{e_1, \dots, e_n\}$ and $\{e'_1, \dots, e'_n\}$ are both integral bases of the number field $K$, then 
+\begin{equation*}
+    \text{disc}_{K / \Q}(e_1, \dots, e_n) =  \text{disc}_{K / \Q}(e'_1, \dots, e'_n).
+\end{equation*}
+\end{corollary}
+
+From Theorem \ref{app thm:rngIntDet}, it can be seen that the (absolute) discriminant of a number field measures the geometric sparsity of its ring of integers, because the larger the discriminant, the larger the size of the fundamental region, hence the more sparse the ideal lattice. 
+
+Another quantity appears in the theorem is the norm of an ideal. Recall that the index $|G:H|$ of a subgroup $H$ in $G$ is the number of cosets of $H$ in $G$. We define the norm of an ideal and its relation to the norm of an element in the following lemma (see Lemma 4.4.3 in Ben Green's book). 
+
+\begin{definition}
+\label{app def:idealNorm}
+\reversemarginpar
+\marginnote{\textit{Ideal norm}}
+Let $I$ be a non-zero ideal of $\OO_K$. The \textbf{norm} of $I$, denoted by $N(I)$ (or sometimes $(\OO_K:I)$), is the index of $I$ as a subgroup of $\OO_K$, i.e., $N(I) = |\OO_K / I|$.
+\end{definition}
+
+\begin{lemma}
+Suppose $I = (\alpha)$ is a principal ideal of $\OO_K$ for some non-zero $\alpha \in \OO_K$. Then $N(I) = |N_{K / \Q}(\alpha)|$. 
+\end{lemma}
+
+As for the norm of number field elements, the norm of ideals is also multiplicative. That is, $N(IJ) = N(I)N(J)$. In addition, if $I$ is a fractional ideal of $\OO_K$, then its norm satisfies $N(I) = N(dI) / |N(d)|$, where $d \in \OO_K$ is the element that makes $dI \in \OO_K$ an integral ideal. 
+
+
+\begin{proof}[Sketch proof of Theorem \ref{app thm:rngIntDet}]
+To prove the determinant of the lattice $\tau(\OO_K)$, we know from the proof of Theorem \ref{app thm:rngIntLat} that $\{\tau(e_1),\dots,\tau(e_n)\}$ is a basis of the lattice and the basis matrix is 
+\begin{equation*}
+N^T = \left(
+\begin{smallmatrix}
+\sigma_1(e_1) & \cdots & \sigma_{r_1}(e_1) & Re(\sigma_{r_1+1}(e_1)) & Im(\sigma_{r_1+1}(e_1)) & \cdots & Re(\sigma_{r_1+r_2}(e_1)) & Im(\sigma_{r_1+r_2}(e_1)) \\
+\vdots & & \vdots & \vdots & \vdots & & \vdots & \vdots \\
+\sigma_1(e_n) & \cdots & \sigma_{r_1}(e_n) & Re(\sigma_{r_1+1}(e_n)) & Im(\sigma_{r_1+1}(e_n)) & \cdots & Re(\sigma_{r_1+r_2}(e_n)) & Im(\sigma_{r_1+r_2}(e_n)) \\
+\end{smallmatrix}
+\right),
+\end{equation*}
+so $\det(\tau(\OO_K))=|\det(N)|$. In addition, the canonical embedding $\sigma$ associates with the matrix 
+\begin{equation*}
+M^T = \left(
+\begin{smallmatrix}
+\sigma_1(e_1) & \cdots & \sigma_{r_1}(e_1) & \sigma_{r_1+1}(e_1) & \overline{\sigma_{r_1+1}(e_1)} & \cdots & \sigma_{r_1+r_2}(e_1) & \overline{\sigma_{r_1+r_2}(e_1)} \\
+\vdots & & \vdots & \vdots & \vdots & & \vdots & \vdots \\
+\sigma_1(e_n) & \cdots & \sigma_{r_1}(e_n) & \sigma_{r_1+1}(e_n) & \overline{\sigma_{r_1+1}(e_n)} & \cdots & \sigma_{r_1+r_2}(e_n) & \overline{\sigma_{r_1+r_2}(e_n)} \\
+\end{smallmatrix}
+\right),
+\end{equation*}
+whose determinant satisfies $\Delta_K=\det(M)^2$. It can be seen that the columns in $N^T$ correspond to the real (or complex) parts of the complex embeddings can be obtained from $M^T$ by adding (or subtracting) the complex conjugate columns. For example, expressing the matrices in column vector format, we get 
+\begin{align*}
+    N^T &= (\dots, Re(\sigma_{r_1+1}(e_1)), Im(\sigma_{r_1+1}(e_1)), \dots) \\
+    &= (\dots, \frac{1}{2}(\sigma_{r_1+1}(e_1)+\overline{\sigma_{r_1+1}(e_1)}), \dots)\\
+    &=-\frac{1}{2i}(\dots, \sigma_{r_1+1}(e_1),\overline{\sigma_{r_1+1}(e_1)}, \dots).
+\end{align*}
+Apply the same operations for all $r_2$ pairs of columns, we get $\det (N) = -\frac{1}{(2i)^{r_2}} \det M$. Hence, 
+\begin{equation*}
+    \det(\tau(\OO_K)) = |\det (N)| = \frac{1}{2^{r_2}} |\det M|=\frac{1}{2^{r_2}}\sqrt{|\Delta_K|}. 
+\end{equation*}
+\end{proof}
+
+From Theorem \ref{app thm:rngIntDet}, it follows the determinant of an ideal lattice is also related to the discriminant of the number field. 
+
+\begin{corollary}
+\label{app cor:idealLatDet}
+Let $I$ be an ideal of $\OO_K$. Then the ideal lattice $\tau(I)$ has determinant  
+\reversemarginpar
+\marginnote{$\det(\tau(I))$}
+\begin{equation*}
+    \det(\tau(I)) = \frac{1}{2^{r_2}}N(I) \sqrt{|\Delta_K|}.
+\end{equation*}
+\end{corollary}
+We have stated that $\tau(I)$ is a lattice in $\R^n$ called ideal lattice. The same strategy can also be used to state the relationship between the associated matrix determinants $\det(N)$ and $\det(M)$. The only difference is that $I$ is a sublattice of $\OO_K$, so its determinant is larger than $\det(\OO_K)$. The scale is exactly the index of $I$ in $\OO_K$ as a subgroup, which is the norm of $I$ by Definition \ref{app def:idealNorm} of ideal norm. 
+
+\iffalse 
+Below we sketch the proof of Theorem \ref{app thm:rngIntDet} for an easy case where the number field $K=\Q(\sqrt{d})$. The proof can be generalized to any number field of an arbitrary dimension. 
+
+\begin{proof}[Sketch proof of Theorem \ref{app thm:rngIntDet}]
+Consider the easy case where $K = \Q(\sqrt{d})$ is a quadratic field. Let $\OO_K$ be the ring of integers with a basis $\{e_1, e_2\}$. The Minkowski embedding $\Phi$ maps the ring of integers to an ideal lattice $\Phi(\OO_K)$ with a basis $\{\Phi(e_1), \Phi(e_2)\}$ such that $\Phi(e_i) = (Re(e_1), Im(e_1))$. Then we have 
+\begin{equation*}
+    \det \left(\Phi(\OO_K) \right) = |\det N|,
+\end{equation*}
+where 
+\begin{equation*}
+N= 
+\begin{pmatrix}
+Re(e_1) & Re(e_2) \\
+Im(e_1) & Im(e_2)
+\end{pmatrix}.
+\end{equation*}
+
+Also the two embeddings $\sigma_1,\sigma_2$ of $K$ are the identity and complex conjugate map, so the discriminant of $K$ is 
+\begin{equation*}
+    \Delta_K = (\det M)^2,
+\end{equation*}
+where 
+\begin{equation*}
+M= 
+\begin{pmatrix}
+e_1 & e_2 \\
+\overline{e_1} & \overline{e_2}
+\end{pmatrix}.
+\end{equation*}
+It can be checked that $|\det N| = \frac{1}{2}|\det M|$, so we have 
+\begin{equation*}
+    \det \left(\Phi(\OO_K) \right) = |\det N| = \frac{1}{2}|\det M| = \frac{1}{2} \sqrt{|\Delta_K|}.
+\end{equation*}
+
+The same argument applies to an ideal $I$ of $\OO_K$ whose norm is $N(I)$. Since $\Phi$ is an isomorphism, $\Phi(I) \subseteq \phi(\OO_K)$ is a sublattice and by lattice theory we have 
+\begin{equation*}
+    \det ( \Phi(I)) = N(I) \det(\Phi(\OO_K)) = \frac{1}{2} N(I)  \sqrt{|\Delta_K|}.
+\end{equation*}
+
+\end{proof}
+\fi
+
+
+\subsection{Dual lattice in number fields}
+\label{app subsec:dualLatInNumField}
+%\kl{Will come back to this if needed! still unsure about the motivation of dual ideal in K, dual ideal in general is used such as in introducing discrete gaussian, smoothing parameter, etc.}
+
+For more detail of the proofs and intuitions in this subsection, the readers should refer to Conrad's lecture notes on ``Different ideal''.
+
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Lattice in $K$}}
+A \textbf{lattice} in an $n$-dimensional number field $K$ is the $\Z$-span of a $\Q$-basis of $K$.  
+\end{definition}
+By the Primitive Element Theorem (Theorem \ref{app thm:primEleThm}), $K$ always has a power basis which is a $\Q$-basis. So the integer linear combination of the $\Q$-basis forms a lattice in $K$. For example, the ring of integers $\OO_K$ is a lattice in the number field $K$. Similar to lattices in general, number field lattices have dual too and share much of the same properties as the general dual lattices as we will see next. Unlike general lattices in $\R^n$ which equips with the dot product, the operator that equips with number field lattices is the trace as defined previously. More precisely, the dual lattice in a number field consists with elements that have integer \textit{trace product} with the given lattice by Equation \ref{app equ:trace}. 
+
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Dual lattice}}
+Let $L$ be a lattice in a number field $K$. Its \textbf{dual lattice} is 
+\begin{equation*}
+    L^{\vee} = \{x \in K \mid Tr_{K/Q}(xL) \subseteq \Z\}.
+\end{equation*}
+\end{definition}
+
+To check whether or not an element belongs to the dual, one can check its trace product with the lattice basis. This also gives a way of writing out the dual of a given lattice. 
+
+\begin{example}
+Let $K=\Q(i)$ and the lattice $L=\Z[i]$. Let $B=\{1,i\}$ be a basis of $L$. To find the dual of $L$, take an element $a+bi \in K$ and consider its trace product with the basis vector in $B$ and check if the trace products are integers. More precisely, we need to check the conditions under which
+\begin{align*}
+    Tr_{K/\Q}(a+bi) &\in \Z \\
+    Tr_{K/\Q}((a+bi)i) &\in \Z.
+\end{align*}
+Let $\alpha=a+bi$ and $\beta=-b+ai$. By Definition \ref{app def:trcNorm} of trace, we have $[m_{\alpha}] = \begin{pmatrix}
+  a & -b\\ 
+  b & a
+\end{pmatrix}$ and 
+$[m_{\beta}] = \begin{pmatrix}
+  -b & -a\\ 
+  a & -b
+\end{pmatrix}$. For both traces to be integers, we must have $2a \in \Z$ and $-2b \in \Z$, so the dual lattice $L^{\vee}=\frac{1}{2}\Z[i]$ and the basis of the dual is $B^{\vee}=\{\frac{1}{2},\frac{i}{2}\}$.
+\end{example}
+
+From the example, it can be seen that the basis and the dual basis satisfy $Tr(e_i e_j^{\vee}) = \delta_{ij}$. This gives rise to the following theorem that states the dual of a number field lattice is also a lattice. 
+
+\begin{theorem}
+\label{app thm:dualBasis}
+\reversemarginpar
+\marginnote{\textit{$\dual{L}$ is lattice}}
+For an $n$-dimensional number field $K$ and a lattice $L \subseteq K$ with a $\Z$-basis $\{e_1, \dots, e_n\}$, the dual $L^{\vee}=\bigoplus \Z e_i^{\vee}$ is a lattice with a dual basis  $\{e_1^{\vee}, \dots, e_n^{\vee}\}$ satisfying $Tr_{K/\Q}(e_i e_j^{\vee}) = \delta_{ij}$.\marginpar{what is $\delta_{ij}?$}
+\end{theorem}
+
+Dual lattices in number fields share similar properties with dual lattices in general. We state a few of them in the following corollary. 
+
+\begin{corollary}
+For lattices in a number field, the following hold: 
+\begin{enumerate}
+    \item $L^{\vee \vee}=L$,
+    \item $L_1 \subseteq L_2 \iff \dual{L_2} \subseteq \dual{L_1}$,
+    \item $\dual{(\alpha L)} \iff \frac{1}{\alpha}\dual{L}$, for an element $\alpha \in K^{\times}$.
+\end{enumerate}
+\end{corollary}
+
+The following theorem relates the dual lattice to differentiation and provides an easier way of computing the dual basis and dual lattice from a given lattice. 
+
+\begin{theorem}
+\label{app thm:dualLatDiff}
+\reversemarginpar
+\marginnote{\textit{Dual basis}}\index{dual basis}
+Let $K=\Q(\alpha)$ be an $n$-dimensional number field with a power basis\index{power basis} $\{1, \alpha, \dots, \alpha^{n-1}\}$ and $f(x) \in \Q[x]$ be the minimal polynomial of the element $\alpha$, which can be expressed as 
+\begin{equation*}
+    f(x) = (x-\alpha)(c_0 + c_1 x + \dots + c_{n-1} x^{n-1}).
+\end{equation*}
+Then the dual basis to the power basis relative to the trace product is $\left\{\frac{c_0}{f'(\alpha)}, \dots, \frac{c_{n-1}}{f'(\alpha)}\right\}$.
+
+In particular, if $K=\Q(\alpha)$ and the primitive element $\alpha \in \OO_K$ is an algebraic integer, then the lattice $L=\Z[\alpha]=\Z + \dots + \Z \alpha^{n-1}$ and its dual are related by the first derivative of the minimal polynomial, that is, 
+\begin{equation*}
+    \dual{L} = \frac{1}{f'(\alpha)}L.
+\end{equation*}
+\end{theorem}
+
+\begin{example}
+Let us work through an example to illustrate both theorems. Let the number field $K=\Q(\sqrt{d})$ and its lattice $L=\Z[\sqrt{d}]$.   
+
+This is a 2-dimensional number field with the primitive element $\alpha = \sqrt{d}$ and the power basis $\{1, \sqrt{d}\}$. The minimal polynomial of $\alpha$ in $\Q[x]$ is $f(x) = x^2-d$ with the derivative $f'(x) = 2x$ so $f'(\alpha)=2\sqrt{d}$. Moreover, the minimal polynomial can be written as $f(x) = (x-\sqrt{d})(x+\sqrt{d})$. By Theorem \ref{app thm:dualLatDiff}, the dual basis is $\{\frac{1}{2}, \frac{1}{2\sqrt{d}}\}$. In addition, if $d \in \Z$ then $\alpha \in \OO_K$, so the dual lattice $\dual{L} = \frac{1}{2\sqrt{d}}L$. This is consistent with the dual basis obtained, because according to the dual basis, the dual lattice $\dual{L} = \Z \frac{1}{2}+\Z \frac{1}{2\sqrt{d}}= \frac{1}{2\sqrt{d}}(\Z+\Z \sqrt{d})=\frac{1}{2\sqrt{d}} L$.
+
+To confirm the dual basis of $\{1, \sqrt{d}\}$ is $\{\frac{1}{2}, \frac{1}{2\sqrt{d}}\}$, we apply Theorem \ref{app thm:dualBasis} to check their trace products. We have 
+\begin{align*}
+    Tr(1 \cdot \frac{1}{2}) &= Tr(\sqrt{d} \cdot \frac{1}{2\sqrt{d}}) = Tr(\frac{1}{2}) = 1 \\
+    Tr(1 \cdot \frac{1}{2\sqrt{d}}) &= Tr(\sqrt{d} \cdot \frac{1}{2}) = 0.
+\end{align*}
+\end{example}
+
+\begin{example}
+An important application of this theorem in our context is when the number field $K=\Q[\zeta_m]$ is the mth cyclotomic number field, where $m=2n=2^k>1$. The ring of integers is then $L=\OO_K=\Z[\zeta_m]$. The minimal polynomial of $\zeta_m$ is $f(x)=x^n+1$ with the derivative $f'(x)=nx^{n-1}$. According to the theorem, we have 
+\begin{equation*}
+    \dual{(\Z[\zeta_m])} = \frac{1}{f'(\zeta_m)} \Z[\zeta_m] = \frac{1}{n\zeta_m^{n-1}} \Z[\zeta_m] = \frac{1}{n} \zeta_m^{n+1} \Z[\zeta_m]= \left(\frac{1}{n}\right).
+\end{equation*}
+The second last equality is because the roots of unit form a cyclic group and hence $\zeta^{-(n-1)}=\zeta^{n+1} \in \OO_K$. 
+\end{example}
+
+
+As a special lattice in $K$, the ring of integers $\OO_K$ was further studied and the following theorems offer some useful observations of its dual. By definition, the dual of $\OO_K$ is 
+\begin{equation*}
+    \dual{\OO_K} = \{x \in K \mid Tr_{K/\Q}(x \OO_K) \subseteq \Z\}.
+\end{equation*}
+On the one hand, $\dual{\OO_K}$ is at least as large as $\OO_K$. Each element in $\OO_K$ is an algebraic integer that has an integer trace\footnote{This can be verified by taking the power basis $\{1, r, \dots, r^{n-1}\}$ of $K$ which is also a $\Z$-basis of $\OO_K$. An element $x \in \OO_K$ can be written as $x=c_0+c_1 r + \dots + c_{n-1}r^{n-1}$. By definition, only $Tr(c_0) \in \Z$ and the rest are 0.}, so $\OO_K \subseteq \dual{\OO_K}$ which happens when $x=1$. On the other hand, $\dual{\OO_K}$ is no larger than the set of elements in $K$ that have integer trace as shown in the next theorem. 
+
+\begin{theorem}
+\reversemarginpar
+\marginnote{\textit{$\dual{\OO_K}$ is frac ideal}}
+The dual lattice $\dual{\OO_K}$ is the largest fractional ideal in $K$ whose elements have integer traces. 
+\end{theorem}
+
+\begin{proof}
+Let $I$ be a fractional ideal in $K$. As it is closed under multiplication by elements in $\OO_K$, we have $I\OO_K=I$. Hence, $Tr(I\OO_K)\subseteq \Z$ if and only if $Tr(I) \subseteq \Z$, which is equivalent to $I \subseteq \dual{\OO_K}$. From these relations, we know that the fractional ideal is in the dual lattice if its elements have integer traces, so the largest fractional ideal whose elements have integer traces is also in the dual. If an additional element is added into the largest fractional ideal that satisfies the condition, then it is not necessarily true that $I\OO_K=I$, so the above relations may not follow.  
+\end{proof}
+
+The next theorem reveals the role that $\dual{\OO_K}$ plays in the dual of an arbitrary fractional ideal, which is also a lattice in $K$. 
+
+\begin{theorem}
+\label{app thm:fracIdealDual}
+\reversemarginpar
+\marginnote{\textit{Frac ideal dual}}
+For a fractional ideal $I$ in $K$, its dual lattice is a fractional ideal and satisfying $\dual{I} = I^{-1} \dual{\OO_K}$.
+\end{theorem}
+
+We have seen the inverse of a fractional ideal in Equation \ref{app equ:fracIdInv}, it is tempting to see if the inverse of the dual $\dual{\OO_K}$ (which is also a fractional ideal) is any special. By definition of fractional ideal inverse (Equation \ref{app equ:fracIdInv}), we have 
+\begin{align*}
+    \inv{(\OO_K)} &= \{x \in K \mid x \OO_K \subseteq \OO_K \} = \OO_K \\
+    \inv{(\dual{\OO_K})} &= \{x \in K \mid x \dual{\OO_K} \subseteq \OO_K \}.
+\end{align*}
+Since $\OO_K \subseteq \dual{\OO_K}$, their inverses satisfy $(\dual{\OO_K})^{-1} \subseteq \OO_K$. Unlike the dual which is a fractional ideal and not necessarily within $\OO_K$, this inclusion makes $\inv{(\dual{\OO_K})}$ an integral ideal. Here, we give it a different name, \textbf{different ideal}
+\reversemarginpar
+\marginnote{\textit{Different ideal}}
+and denote it by $\DD_K := \inv{(\dual{\OO_K})}$.\footnote{To be clear. Some refer $\DD_K$ as the different ideal of $K$ and the notation suggests it too. But $K$ is a field which has exactly two ideals, the zero ideal and itself, so $\DD_K$ is not an ideal of $K$ but of $\OO_K$.} For example, let $K=\Q(i)$ and $\OO_K=\Z[i]$. The dual ideal is $\dual{\OO_K}=\dual{\Z[i]}=\frac{1}{2}\Z[i]$, so the different ideal $\DD_K=\inv{(\frac{1}{2}\Z[i])}=2\Z[i]$.
+
+The next theorem relates the different ideal with the differentiation of the minimal polynomial. It can be proved easily by applying Theorem \ref{app thm:dualLatDiff}.
+\begin{theorem}\label{app thm:difIdeal1}
+Let $\OO_K=\Z[\alpha]$ be the ring of integers of a number field $K$ and $f(x) \in \Z[x]$ be the minimal polynomial of $\alpha$, then the different ideal $\DD_K=(f'(\alpha))$.
+\end{theorem}
+
+As mentioned before, $\OO_K$ does not always have a power basis, so not all $\OO_K$ can be written as $\Z[\alpha]$. 
+Let us look at a special case in the above example where $\OO_K=\Z[i]$, the minimal polynomial of $\alpha=i$ is $f(x)=x^2+1$ and its derivative is $f'(\alpha)=2i$. Hence, the different ideal $\DD_K=(2i)$ is a principal ideal of $\OO_K$, so $\DD_K=2i\cdot \Z[i]=2\Z[i]$. The example can be generalized to some special cyclotomic fields, in which there is an explicit relations between the different ideal and the ring of integers. It can be easily proved using the above theorem. 
+
+\begin{lemma}
+\label{app lm:difIdeal}
+\reversemarginpar
+\marginnote{\textit{$\DD_K = n \OO_K$}}
+For $m=2n=2^k \ge 2$ a power of 2, let $K=\Q(\zeta_m)$ be an $m$th cyclotomic number field and $\OO_K=\Z[\zeta_m]$ be its ring of integers. The different ideal satisfies $\DD_K = n \OO_K$.
+\end{lemma}
+This lemma plays an important role in RLWE in the special case where the number field is an $m$ cyclotomic field. It implies that the ring of integers $n^{-1}\OO_K=\dual{\OO_K}$ and its dual are equivalent by a scaling factor. Hence, the secret polynomial $\vc{s}$ and the random polynomial $\vc{a}$ can both be sampled from the same domain $R_q$, unlike in the general context where the preference is to leave $\vc{s} \in \dual{R_q}$ in the dual. 
+
+To finish off this subsection, we state the relation between the norm of the different ideal and the discriminant of the number field. See Theorem 4.6 in Conrad's lecture notes on ``different ideal''.
+
+\begin{theorem}
+For a number field $K$, its discriminant $\Delta_K$ and different ideal $\DD_K$ satisfies $N(\DD_K)=|\Delta_K|$.
+\end{theorem}
+\iffalse
+\begin{proof}
+To sketch the proof. Given an integral basis $\{e_1, \dots, e_n\}$ of $\OO_K$ and its dual basis $\{\dual{e_1}, \dots, \dual{e_n}\}$ for $\dual{\OO_K}$. Since $\DD_K$ is also an integral ideal of $\OO_K$ and the norm of an ideal is its index in the ring, so $N(\DD_K)=[\dual{\OO_K}:\OO_K]$ (derivation skipped). The index is 
+\end{proof}
+\fi 
+
+%\newpage
+%\bibliography{references}
+%\bibliographystyle{abbrvnat}
+
+\end{document}

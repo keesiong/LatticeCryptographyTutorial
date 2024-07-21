@@ -1,0 +1,320 @@
+\documentclass[../main.tex]{subfiles}
+%\graphicspath{{\subfix{images/}}}
+
+
+\begin{document}
+
+%\section{Discrete Gaussian distribution}
+
+%The discrete Gaussian distribution... see section 5.2 of \cite{mukherjee2016cyclotomic}.
+
+Discrete Gaussian distribution is an important ingredient in the provable security of lattice-based cryptosystems. It was first employed by \citet{micciancio07worst} in order to improve the provable security of \citet{ajtai1996generating}'s SIS problem by reducing the gaps in the approximated lattice problems. The technique was then widely adopted by subsequent lattice-based works to obtain provable security, for example, the learning with error (LWE) and ring learning with error (RLWE) problems. This discrete distribution behaves in a similar fashion as the continuous Gaussian, but with a discrete lattice support. In this section, we will discuss some essential properties of discrete Gaussian distribution and how it is used to improve the provable security of SIS. 
+
+\subsection{Discrete Gaussian distribution}
+
+A \textbf{Gaussian function} is a continuous function of the form 
+\begin{equation*}
+    f(x) = a \cdot \exp \left(-\frac{(x-c)^2}{2\sigma^2} \right).
+\end{equation*}
+The mostly common  Gaussian function  is the probability density function of the Gaussian distribution. For simplicity, we work with the case when $a=1$, so we can define the \textbf{Gaussian measure} in $\R$ as 
+\reversemarginpar
+\marginnote{\textit{Gaussian measure}}
+\begin{equation*}
+    \rho_{\sigma,c}(x) = \exp\left( -\frac{(x-c)^2}{2\sigma^2}\right). 
+\end{equation*}
+Another (more common) algebraic form of the Gaussian measure is using a \textit{scale} parameter $s = \sqrt{2\pi} \sigma$, so for a vector $\vc{x} \in \R$, the Gaussian measure is
+\begin{equation*}
+    \rho_{s,c}(x) = \exp\left( -\frac{-\pi (x-c)^2}{s^2}\right).
+\end{equation*}
+Both equations can be generalized to higher dimensional space $\R^n$. For the second form, the high dimensional generalization looks like 
+\begin{equation}
+\label{equ:gauMeasure}
+    \rho_{s,\vc{c}}(\vc{x}) = \exp\left( -\frac{-\pi ||\vc{x}-\vc{c}||^2}{s^2}\right).
+\end{equation}
+Integrating the measure over $\R^n$, we get the total measure\footnote{The total measure is not 1 because the coefficient $a$ in the Gaussian function is ignored.} % See appendix for a proof.}
+\begin{equation*}
+    \int_{\vc{x} \in \R^n} \rho_{s,\vc{c}}(\vc{x}) \diff \vc{x} = s^n
+\end{equation*}
+and hence we can define the $n$-dimensional (continuous) Gaussian 
+\reversemarginpar
+\marginnote{\textit{Gaussian PDF}}
+probability density function (PDF) as 
+\begin{equation}
+\label{equ:ctsGauPDF}
+    D_{s,\vc{c}}(\vc{x}) = \frac{\rho_{s,\vc{c}}(\vc{x})}{s^n}.
+\end{equation}
+This is just the PDF of the Gaussian distribution that we know from probability theory. 
+The expected squared distance from a vector $\vc{x} \in \R^n$ to the distribution center $\vc{c}$ (i.e., the variance of the Gaussian random variable that takes value $\vc{x} \in \R^n$) is 
+\begin{equation*}
+    E\left[||\vc{x}-\vc{c}||^2\right] = \sigma^2 = \frac{n s^2}{2\pi}
+\end{equation*}
+due to the relationship between $\sigma$ and $s$. This suggests that most of the vectors $\vc{x} \in \R^n$ are expected to have distance at most $s\sqrt{n/2\pi}$ to the center $\vc{c}$, so intuitively we think that these Gaussian samples form a $n$-dimensional ball centered at $\vc{c}$ with radius $s\sqrt{n/2\pi}$. Obviously, the larger the scale $s$ is, the wider the Gaussian distribution is, so the larger the radius of the ball. 
+
+Equation \ref{equ:gauMeasure} and \ref{equ:ctsGauPDF} would still make sense if $\vc{x}$ is a discrete lattice vector. In addition, a lattice $L$ is a countable set, so the total Gaussian measure and the Gaussian PDF over the lattice are  
+\begin{align*}
+    \rho_{s,\vc{c}}(L) &= \sum_{\vc{x} \in L} \rho_{s,\vc{c}}(\vc{x})\\
+    D_{s,\vc{c}}(L) &= \frac{\rho_{s,\vc{c}}(L)}{s^n}.
+\end{align*}
+Hence, we can define the \textbf{discrete Gaussian distribution} \index{discrete Gaussian distribution} 
+\reversemarginpar
+\marginnote{\textit{Discrete Gaussian}}
+over the lattice $L$ for all lattice vectors $\vc{x} \in L$ as 
+\begin{equation*}
+    D_{L,s,\vc{c}}(\vc{x}) = \frac{D_{s,\vc{c}}(\vc{x})}{D_{s,\vc{c}}(L)} = \frac{\rho_{s,\vc{c}}(\vc{x})}{\rho_{s,\vc{c}}(L)}.
+\end{equation*}
+This can be interpreted as the conditional probability of $\vc{x}$ given that it is a lattice vector. The numerator is the probability of $\vc{x}$ being a lattice vector and follows a Gaussian distribution. The denominator is the probability of an arbitrary Gaussian random variable in $\R^n$ takes on a value of a lattice vector in $L$. 
+
+The discrete Gaussian distribution is commonly used to introduce randomness in lattice-based cryptosystems, as we will see in the LWE distribution. Unlike a uniform distribution over a space, Gaussian distribution does not have sharp boundaries, which is useful when smoothing a distribution over a space. More precisely, given a Gaussian distribution $\rho_{s,\vc{c}}(\vc{s})$ whose center is a lattice point (i.e., $\vc{c} \in L$), if random samples from this distribution are taken modulo the lattice fundamental region, the resulting samples will induce a distribution within the fundamental region. Whether or not such a distribution is close to the uniform distribution depends on the scale $s$ of the Gaussian distribution. Obviously, the larger $s$ is, the closer the induced distribution is to uniform. 
+
+% \kl{Work out the statistical distance b/w discrete gaussian and uniform, which motivates the definition of smoothing parameter, see \url{https://cims.nyu.edu/~regev/teaching/lattices_fall_2004/ln/averagecase.pdf}}
+To give a quantitative threshold on how large $s$ needs to be, \citet{micciancio07worst} introduced the smoothing parameter. Informally, the smoothing parameter corresponds to the smallest norm of a Gaussian noise, adding which to each lattice vector makes the entire lattice almost identical to the uniform distribution. It is, however, formally defined in terms of the Gaussian measure on the dual lattice. % \footnote{The motivation of defining the smoothing parameter in terms of the dual lattice is unknown. Perhaps it is convenient to prove other properties of the discrete Gaussian by defining it this way, for example, when proving the discrete Gaussian is almost uniform over the fundamental domain.} 
+For the rest of this section, we assume $\epsilon(n)>0$ (or just $\epsilon>0$ if the context is clear) is a negligible function of the space dimension $n$.   
+
+\begin{definition}
+\label{def:smthPara}
+The \textbf{smoothing parameter} \index{smoothing parameter} 
+\reversemarginpar
+\marginnote{\textit{Smoothing parameter}}
+of an $n$-dimensional lattice $L$, denoted $\eta_{\epsilon}(L)$, is the smallest $s$ such that the Gaussian measure $\rho_{1/s}(L^* \setminus \{0\}) \le \epsilon$.
+\end{definition}
+
+In other words, the Gaussian measure gives almost all weights to the origin in the dual. 
+% It is not clear why the smoothing parameter is expressed in terms of the dual lattice rather than the lattice itself. Perhaps the motivation is to relate this concept to the dual so that some results can be proved later. 
+Note $\rho_{1/s}(L^* \setminus \{0\})$ is a well-defined decreasing function of $s$ with the range $(0, \infty)$. More precisely, $\lim_{s \rightarrow \infty} \rho_{1/s}(L^* \setminus \{0\}) = 0$ because when $s \rightarrow \infty$ its inverse $\frac{1}{s} \rightarrow 0$, which implies the Gaussian measure puts almost all weights on $0$. Conversely, $\lim_{s \rightarrow 0} \rho_{1/s}(L^* \setminus \{0\}) = \infty$.
+
+Next, we relate the smoothing parameter to two standard lattice quantities. We state the results and the intuitions without proving them. 
+
+\begin{lemma}
+\reversemarginpar
+\marginnote{\textit{$\lambda_1(L^*)$}}
+The smoothing parameter of an $n$-dimensional lattice $L$ satisfies $\eta_{\epsilon}(L) \le \frac{\sqrt{n}}{\lambda_1(L^*)}$.
+\end{lemma}
+
+It is not difficult to see this inverse relationship between $\eta_{\epsilon}(L)$ and $\lambda_1(L^*)$. By intuition, the smaller $\lambda_1(L)$ is the smaller $\eta_{\epsilon}(L)$ needs to be and vice versa. As explained in the previous section, $\lambda_1(L)$ and $\lambda_1(L^*)$ are in an inverse relationship. So the larger $\lambda_1(L^*)$ is the smaller $\lambda_1(L)$ is which requires a smaller $\eta_{\epsilon}(L)$. The following lemma relates the smoothing parameter to the successive minima of a lattice. 
+
+\begin{lemma}
+\label{lm:smthParUpperBd}
+\reversemarginpar
+\marginnote{\textit{$\lambda_n(L)$}}
+The smoothing parameter of an $n$-dimensional lattice $L$ satisfies 
+\begin{equation*}
+    \eta_{\epsilon}(L) \le \sqrt{\frac{\ln (2n(1+1/\epsilon))}{\pi}} \cdot \lambda_n(L).
+\end{equation*}
+\end{lemma}
+
+\iffalse % KS : Not clear why this is needed 
+The function inside of the square root is in $\omega(\log n)$\footnote{It is called ``superlogarithm'' by \cite{micciancio07worst}.} The lemma remains true for all functions in $\omega(\log n)$. Another way of saying this is, 
+\begin{equation*}
+    \eta_{\epsilon}(L) \le \sqrt{\omega(\log n)} \cdot \lambda_n(L)
+\end{equation*}
+\fi
+
+\iffalse
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Packing radius}}
+For a lattice $L$, the \textbf{packing radius} $r(L)$ is defined as the largest radius $r$ such that the open balls centered at all lattice points in $L$ with radius $r$ do not intersect, i.e.,  
+\begin{equation*}
+    \bigcap_{\mathbf{v} \in L} B(\mathbf{v},r) = \emptyset,
+\end{equation*}
+where $B(\mathbf{v},r)=\{\mathbf{x} \in L \mid ||\mathbf{x}-\mathbf{v}|| < r\}$ is the open ball centered at $\mathbf{v}$ with radius smaller than $r$.
+\end{definition}
+Intuitively, it can be seen that the packing radius is half of the length of the shortest vector $\lambda_1(L)$.
+
+\begin{definition}
+\reversemarginpar
+\marginnote{\textit{Covering radius}}
+For a lattice $L$, the \textbf{covering radius} $\mu(L)$ is defined as the smallest radius $\mu$ such that the closed balls centered at all lattice points in $L$ cover the span of $L$, i.e., 
+\begin{equation*}
+    span(L) \subseteq \bigcup_{\mathbf{v} \in L} \Bar{B}(\mathbf{v}, \mu),
+\end{equation*}
+where $\Bar{B}(\mathbf{v},\mu)=\{\mathbf{x} \in L \mid ||\mathbf{x}-\mathbf{v}|| \le \mu\}$ is the closed ball centered at $\mathbf{v}$ with radius no greater than $\mu$.
+\end{definition}
+
+Let the distance between a vector $\mathbf{x} \in \R^n$ and a lattice $\Lambda$ be 
+\begin{equation*}
+    ||\mathbf{x} -\Lambda||=\min_{\mathbf{v} \in \Lambda} ||\mathbf{x}-v||,
+\end{equation*}
+the covering radius can also be defined as 
+\begin{equation}
+    \mu = \max_{\mathbf{x} \in \R^n} ||\mathbf{x}-\Lambda||.
+\end{equation}
+
+Clearly, the covering radius is at least as large as the packing radius, for otherwise some parts of the span will be missed out. \kl{add a figure to demonstrate.}
+\fi 
+
+
+\subsection{Fourier transform of discrete Gaussian distribution}
+
+% see Micciancio's lecture notes for more details. 
+
+%DG is integrable, so it has FT, FT is an important strategy for proving properties of DG, the ultimate purposes are smoothing parameter entails a close to uniform distribution and DG behaves like continuous Gaussian, we will need the Poisson summation formula to prove these results. 
+
+So far, we have defined the discrete Gaussian distribution and the smoothing parameter of a lattice. We have also intuitively explained how these two are essential for sampling random lattice noise. In this subsection, we will state the theorems that guarantee the uniformity of the discrete Gaussian when its scale is at least as large as the smoothing parameter and its similarity to the continuous Gaussian distribution. To do so, we need to introduce the Fourier transform of the Gaussian and the Poisson summation formula which help with the derivation of these important results. 
+
+According to its definition, the Gaussian measure over $\R^n$ is integrable, that is, $\int_{\vc{x} \in \R^n} \rho_{s,\vc{c}}(\vc{x}) \diff \vc{x} = s^n < \infty$, so it has the Fourier transform \index{Fourier transform}
+\reversemarginpar
+\marginnote{\textit{Fourier transform}}
+\begin{equation}
+\label{equ:ftGaussian}
+    \hat{\rho}_{s,\vc{c}}(\vc{y}) = \int_{\vc{x} \in \R^n} \rho_{s,\vc{c}}(\vc{x}) e^{-2\pi i \langle \vc{x} \cdot \vc{y} \rangle} \diff \vc{x}.
+\end{equation}
+This is the most common convention of the Fourier transform of an integrable function. The Fourier transform of the Gaussian is important for proving the Poisson summation formula as well as proving some properties of the discrete Gaussian distribution. It has several important properties, the most important one is that the Fourier transform of the Gaussian measure is itself. We state the result below for a Gaussian measure centered at the origin.
+
+\begin{lemma}
+The Gaussian function centered at the origin $\rho_{s}(\vc{x})=e^{-\pi ||\vc{x}||^2/s^2}$ equals its Fourier transform times a scaling factor, that is, $\rho_{s}(\vc{x})=s^n \hat{\rho}_{s}(\vc{x})$.
+\end{lemma}
+
+In the special case when $s=1$, the lemma states that the Gaussian function is its own Fourier transform. We go through the proof here in order to get familiar with the Fourier transform of Gaussian functions. 
+
+\begin{proof}
+We first prove the equality for 1 dimensional space $\R$. This can be done by substituting the Gaussian function into the integral of Fourier transform 
+\begin{align*}
+    \hat{\rho}_{s}(y) &= \int_{x \in \R} \rho_{s}(x) e^{-2\pi i x y} \diff x \\
+    &= \int_{x \in \R} e^{-\pi x^2/s^2} e^{-2\pi i x y} \diff x \\
+    &= \int_{x \in \R} e^{-\pi( x^2/s^2-2 i x y)} \diff x 
+\end{align*}
+Making the exponent a complete square and taking the $y$ term out of the integral, it becomes 
+\begin{align*}
+    &= e^{-\pi y^2 s^2} \int_{x \in \R} e^{-\pi( x+iys^2)^2/s^2} \diff x \\
+    &= \rho_s(y) \int_{x \in \R+iys^2} \rho_s(x) \diff x \\
+    &= \rho_s(y) \int_{x \in \R} \rho_s(x) \diff x \\
+    &= \rho_s(y) s.
+\end{align*}
+The second last equality is by Cauchy's Theorem and the last equality is just the total integral of the Gaussian measure over $\R$.
+Now we can prove the general case in $\R^n$ using the above result by integrating each term in the vectors $\vc{x}$ and $\vc{y}$ 
+\begin{align*}
+    \hat{\rho}_{s}(\vc{y}) &= \int_{\vc{x} \in \R^n} \rho_{s}(\vc{x}) e^{-2\pi i \langle \vc{x}, \vc{y}\rangle} \diff \vc{x} \\
+    &= \int_{x \in \R^n} \prod_{k=1}^n e^{-\pi x_k^2/s^2} e^{-2\pi i x_k y_k} \diff  \vc{x}\\
+    &= \prod_{k=1}^n \int_{x_k \in \R}  e^{-\pi x_k^2/s^2} e^{-2\pi i x_k y_k} \diff  x_k\\
+    &= \prod_{k=1}^n \hat{\rho}_s(y_k) \\
+    &= \prod_{k=1}^n s \rho_s(y_k) \\
+    &= s^n \rho_s(\vc{y}).
+\end{align*}
+The third equality is by the property of integrating exponential functions. The second last equality is by by the result in the 1-dimensional space.  
+\end{proof}
+
+The following lemma states another three important properties of the Fourier transform of integrable functions, not necessarily just the Gaussian function. It explicitly tells us how a function's Fourier transform changes when the function's input is translated or linearly transformed by a non-singular matrix. These are particularly important for our study of the discrete Gaussian distribution, as they allow us to shift back to the standard discrete Gaussian distribution $D_L$, that is, $D_{L,s,\vc{c}}$ where the scale $s=1$ and the center $\vc{c}=\vc{0}$. We will state the lemma without proving it, as the proofs are relatively straightforward by writing out the full algebraic forms of the Fourier transform and Gaussian function. 
+
+\begin{lemma}
+\label{lm:FTProperties}
+For any integrable function $f(\vc{x})$ in the $n$-dimensional space $\R^n$, the following are satisfied:
+\begin{enumerate}
+    \item For a non-singular matrix $M$, if the function $h(M\vc{x})=f(\vc{x})$ then its Fourier transform $\hat{h}(\vc{y})=\det(M) \hat{f}(M^T) \vc{y}$.
+    \item If $h(\vc{x})=f(\vc{x}+\vc{v})$, then its Fourier transform $\hat{h}(\vc{y})=\hat{f}(\vc{y}) \cdot e^{2\pi i \langle \vc{y},\vc{v}\rangle}$.
+    \item If $h(\vc{x})=f(\vc{x})\cdot e^{2\pi i \langle \vc{x},\vc{v}\rangle}$, then its Fourier transform $\hat{h}(\vc{y})=\hat{f}(\vc{y}-\vc{v})$.
+\end{enumerate}
+\end{lemma}
+
+It follows from this lemma\footnote{See Theorem 3 in the lecture notes \textit{The Gaussians Distribution} by Daniele Micciancio for the course \textit{Lattice Algorithms and Applications}, Winter 2016.} an important mathematical result, the \textbf{Poisson summation formula} \index{Poisson summation formula}. For our purpose, we only state the formula for arbitrary lattices. The formula relates the sum of an integrable function over a lattice to the sum of its Fourier transform over the dual lattice. This in return entails properties of the Gaussian measure over lattices.  
+\begin{lemma}
+\reversemarginpar
+\marginnote{\textit{Poisson summation formula}}
+For any $n$-dimensional lattice $L$ and an integrable function $f$ of $L$, it satisfies 
+\begin{equation}
+    \sum_{\vc{x} \in L} f(x) = \det(L^*) \sum_{\vc{y} \in L^*} \hat{f}(\vc{y}).
+\end{equation}
+\end{lemma}
+
+A special case of the Poisson summation formula is when  $f$ is the Gaussian function. It implies that the total Gaussian measure over a lattice $L$ equals the total Gaussian measure over its dual multiplies the dual determinant, that is, 
+\begin{align*}
+    \rho_{s,\vc{c}}(L) &= \det(L^*) \hat{\rho}_{s,\vc{c}}(L^*) \text{ or } \\
+    \hat{\rho}_{s,\vc{c}}(L^*) &= \det(L) \rho_{s,\vc{c}}(L).
+\end{align*}
+
+An important application of the Poisson summation formula in this context is the statement that the Gaussian measure of a lattice is maximized when centering at a lattice point. 
+
+\begin{lemma}
+For an $n$-dimensional lattice $L$, the Gaussian measure $\rho_{s,\vc{c}}(\vc{x})$ with the scale $s > 0$ and center $\vc{c} \in \R^n$ satisfies $\rho_{s,\vc{c}}(\vc{x}) \le \rho_s(\vc{x})$.
+\end{lemma}
+\begin{proof}
+The key of the proof is shifting the Gaussian measure $\rho_{s,\vc{c}}(\vc{x})$ to the zero centered Gaussian $\rho_s(\vc{x})$, then use the property that a lattice vector and a dual lattice vector has an integer dot product. 
+\begin{align*}
+    \rho_{s,\vc{c}}(L) &= \det(L^*) \hat{\rho}_{s,\vc{c}}(L^*) \\
+    &= \det(L^*) \sum_{\vc{y} \in L^*} \hat{\rho}_{s,\vc{c}}(\vc{y}) \\
+    &= \det(L^*) \sum_{\vc{y} \in L^*} e^{2\pi i\langle -\vc{c},\vc{y} \rangle} \hat{\rho}_{s}(\vc{y}) \\
+    &\le \det(L^*) \sum_{\vc{y} \in L^*} \hat{\rho}_{s}(\vc{y}) \\
+    &= \rho_s(L).
+\end{align*}
+The third equality is by the second point of Lemma \ref{lm:FTProperties} and the equality $\hat{\rho}_{s,\vc{c}}(\vc{y})=\hat{\rho}_s(\vc{y}+\vc{-c})$. The inequality is due to the fact that $e^{2\pi i\langle -\vc{c},\vc{y} \rangle} \le 1$ and the maximum is obtained when the dot product $\langle \vc{-c}, \vc{y}\rangle$ is an integer, which requires the Gaussian center $\vc{c}$ to be a lattice point in $L$.
+\end{proof}
+
+We finish this subsection by stating two essential properties of Gaussian distribution. Recall that any vector $t \in \R^n$ in the span of a lattice $L$ is uniquely identifiable by a lattice vector $v$ and a (translation of) vector $w \in F$ in the fundamental domain $F$ of $L$. This gives rise to a way of reducing an arbitrary vector in $\R^n$ to a vector within $F$ by taking $w \equiv t \bmod F$ the vector modulo the fundamental domain. The next lemma addresses the near uniformity of the distribution over $F$ induced by applying this modulo operation. 
+
+\begin{lemma}
+\label{lm:nearUniform}
+\reversemarginpar
+\marginnote{\textit{Near uniformity}}
+Let $L$ be an $n$-dimensional lattice and $D_{s,\vc{c}}$ be a Gaussian distribution with arbitrary scale $s \ge \eta_{\epsilon}(L)$ and center $\vc{c} \in \R^n$, the statistical distance between $D_{s,\vc{c}} \bmod F$ and a uniform distribution $U(F)$ over the fundamental region $F$ is 
+\begin{equation*}
+    \Delta(D_{s,\vc{c}} \bmod F, U(F)) \le \frac{\epsilon}{2} .
+\end{equation*}
+\end{lemma}
+
+It can be proved that for $s>0$ the statistical distance $\Delta \le \rho_{1/s}(L^* \setminus \{\vc{0}\})$. The lemma then follows since the Gaussian's scale is at least as large as the smoothing parameter. We do not go through the proof here (see \citep{micciancio07worst} Lemma 4.1). It uses the Fourier transform of the Gaussian function and the properties of the discrete Gaussian described before.  
+
+The next lemma proves a similar behaviour of the discrete and continuous Gaussian distributions when the scale of discrete Gaussian is sufficiently large. 
+
+\begin{lemma}
+\reversemarginpar
+\marginnote{Similar to continuous Gaussian}
+Let $D_{L, s,\vc{c}}$ be a discrete Gaussian distribution over an $n$-dimensional lattice $L$ with arbitrary scale $s \ge 2\eta_{\epsilon}(L)$ and center $\vc{c} \in \R^n$. For $0 < \epsilon < 1$, the following are satisfied
+\begin{align*}
+    \left|\left|E_{\vc{x} \sim D_{L, s, \vc{c}}}\left[\vc{x}-\vc{c}\right] \right|\right|^2 &\le \left(\frac{\epsilon}{1-\epsilon}\right)^2 s^2 n,  \\
+    E_{\vc{x} \sim D_{L, s, \vc{c}}}\left[\left|\left|\vc{x}-\vc{c}\right|\right|^2\right] &\le \left(\frac{1}{2\pi}+\frac{\epsilon}{1-\epsilon}\right)^2 s^2 n.
+\end{align*}
+\end{lemma}
+The first inequality suggests that on expectation the random samples from $D_{L,s,\vc{c}}$ are close to the discrete Gaussian center, with the distance at most $s\sqrt{n}$. It ensures that if the discrete Gaussian is centered at the origin, then the lattice vectors sampled from this distribution will have small norms. The second inequality is consistent with the continuous Gaussian's variance (i.e., $\frac{ns^2}{2\pi}$) as discussed at the beginning of this section.
+
+% \kl{Add claim 3.9 from \citep{regev2009lattices}, which is mentioned in lemma 2.5 in \citep{lyubashevsky2010ideal}. The claim says that adding continuous Gaussian noise to discrete Gaussian samples smooth out the discreteness of the samples.}
+
+\subsection{Discrete Gaussian for provable security}
+
+In this subsection, we revisit the provable security of the short integer solution (SIS) problem, but use the discrete Gaussian strategy to reduce the gaps of hard lattice problems. \index{discrete Gaussian distribution! SIS security proof}
+Recall that SIS is parameterized by a modulus $q(n)$, number of linearly independent vectors $m(n)$ and a norm bound $\beta(n)$, all are functions of the security parameter $n$, which can be omitted if the context is clear. The purpose of SIS is to find a short integer vector $\vc{x} \in \Z^m$ such that 
+\begin{itemize}
+    \item $||\vc{x}|| \le \beta$ and 
+    \item $A \vc{x} =\vc{0} \in \Z_q^n$ for an arbitrary integer matrix $A \in \Z_q^{n \times m}$.
+\end{itemize}
+A guarantee of the existence of an SIS solution was stated in Lemma 5.2 in \citep{micciancio07worst}. It requires the norm bound to satisfy $\beta(n) \ge \sqrt{m} q^{n/m}$ in order to guarantee a solution. 
+
+Same as the previous proof strategy, \citet{micciancio07worst} also introduced an intermediate lattice problem - incremental guaranteed distance decoding - to reduce to SIS. The standard lattice problems can be reduced to this intermediate problem relatively easier. In \citet{ajtai1996generating}'s proof, the intermediate problem is the GAPSBP$_{\gamma}$ or GAPSIVP$_{\gamma}$. The problem is similar to the bounded distance decoding (BDD) problem introduced in Section \ref{section:lattice theory} but with minor differences. 
+
+\begin{definition}
+\label{def:incgdd}
+Given a basis $B$ of an $n$-dimensional lattice $L$, a set of linearly independent lattice vectors $S \subseteq L$, a target vector $\vc{t} \in \R^n$ and a real $r > \gamma(n) \phi(B)$, the \textbf{incremental guaranteed distance decoding (INCGDD)} problem outputs a lattice vector $\vc{v} \in L$ such that $||\vc{v}-\vc{t}|| \le (||S||/g)+r$.
+\end{definition}
+
+There are several parameters to set for the problem. As suggested in their paper, one can set $g=4$, $\gamma(n)=\sqrt{n}/2$ and the function $\phi(B):=\lambda_n(B)$ to be the successive minima. The real value $r$ is added to $||S||/g$ to ensure a solution exists. 
+
+The application of discrete Gaussian distribution in the proof of a reduction is shown next (Lemma 5.7 in \citep{micciancio07worst}. The lemma proves a sampling mechanism that outputs a uniform vector in the fundamental region and a lattice vector. The former will be used as an input for the SIS oracle. The latter will be used with another lattice vector to generate a lattice vector that is close to the target. More formally, the lemma can be stated as the next. 
+
+\begin{lemma}
+Given an $n$-dimensional lattice $L$, a vector $\vc{t} \in \R^n$ and a scale $s \ge \eta_{\epsilon}(L)$ for some $\epsilon>0$, there is a PPT algorithm $S(L,\vc{t},s)$ outputs a pair $(\vc{c},\vc{y}) \in F \times L$ such that 
+\begin{itemize}
+    \item the distribution of $\vc{c}$ and the uniform distribution $U(F)$ over the fundamental region has statistical distance at most $\epsilon/2$,
+    \item for any vector $\vc{\hat{c}} \in F$, if $\vc{c}=\vc{\hat{c}}$ then it follows that $\vc{y} \sim D_{L,s,\vc{t}+\vc{\hat{c}}}$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+The PPT algorithm $S$ first samples a noise vector $\vc{r} \leftarrow D_{s,\vc{t}}$, then outputs:
+\begin{itemize}
+    \item $\vc{c} \equiv -\vc{r} \bmod F$,
+    \item $\vc{y}=\vc{c}+\vc{r}$.
+\end{itemize}
+The sampling mechanism implies that $\vc{c} \sim D_{s,-\vc{t}} \bmod F$. By Lemma \ref{lm:nearUniform}, we have $\Delta(D_{s,-\vc{t}} \bmod F, U(F)) \le \epsilon/2$. 
+
+To prove $\vc{y}$ follows a discrete Gaussian distribution, we know from the definition of discrete Gaussian that it can be interpreted as the conditional probability of $\vc{y}$ comes from a continuous Gaussian given it is a lattice vector. The assumption $\vc{c}=\vc{\hat{c}}$ implies $\vc{y}=\vc{c}+\vc{r}=\vc{\hat{c}}+\vc{r} \sim D_{s,\vc{t}+\vc{\hat{c}}}$. In addition, $\vc{c}=\vc{\hat{c}}$ implies $\vc{c}+\vc{r} = \vc{\hat{c}}+\vc{r} \equiv \vc{0} \bmod F$. It then follows that $\vc{\hat{c}}+\vc{r} \in L$ is a lattice vector. So $\vc{y}$ comes from a discrete Gaussian distribution.
+\end{proof}
+
+Comparing with the strategy of generating random ring elements in $\Z_p^n$ in Ajtai's reduction, that is, constructing a large fundamental region then cutting it down gradually, the discrete Gaussian sampling mechanism is much simpler. This is also the key of reducing the gap factors in the hard lattice problems. We will not go through the rest of the proof of a reduction from INCGDD to SIS, the readers and refer to Section 5.2 of \citep{micciancio07worst}. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newpage
+%\bibliography{references}
+%\bibliographystyle{abbrvnat}
+
+
+\end{document}

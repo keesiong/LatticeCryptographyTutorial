@@ -1,0 +1,104 @@
+\documentclass[../main.tex]{subfiles}
+%\graphicspath{{\subfix{images/}}}
+
+\begin{document}
+
+\label{appen:mindmaps}
+
+\subsection{A mindmap for RLWE}
+
+% \begin{tikzpicture}[mindmap, grow cyclic, every node/.style=concept, concept color=orange!40, 
+%	level 1/.append style={level distance=5cm,sibling angle=90},
+%	level 2/.append style={level distance=3cm,sibling angle=45},]
+	
+\begin{tikzpicture}[grow cyclic, text width=3cm, align=flush center,
+	level 1/.style={level distance=3cm,sibling angle=90},
+	level 2/.style={level distance=3.5cm,sibling angle=45}]	
+\node{$\Z[x]/(\Phi_m(x))$ \\ $\cong \Z(\zeta_m) = O_{\Q(\zeta_m)}$}
+child { node {Cyclotomics \& their Galois Groups}
+	child { node {$m$-th Cyclotomic Polynomials for $m = 2^k = 2n$ [\ref{mindmap:rlwe defn},\ref{mindmp:decision to search rlwe}] }} 
+	child { node {Automorphisms \&\\ Permutations of Polynomial Coeffs [\ref{mindmp:decision to search rlwe}]}}
+}
+child { node {Canonical Embedding}
+	child { node {Ideal Lattices from Fractional Ideals [\ref{mindmap:rlwe defn}]}}
+	child { node {Efficient Polynomial Multiplication [\ref{mindmap:rlwe computations}]}}
+	child { node {Ideal Norms \\and Geometric Quantities [\ref{mindmap:rlwe defn},\ref{mindmap:search rlwe}]}}
+%	child { node {Power Basis}}
+}
+child { node {Chinese Remainder Theorem}
+	child { node {Isomorphisms \\between $R_q$ and $I_q$ [\ref{mindmap:search rlwe},\ref{mindmp:decision to search rlwe}]}}
+	child { node {CRT Representations \\ of Polynomials [\ref{mindmap:rlwe computations},\ref{mindmp:decision to search rlwe}]}}	
+}
+child { node {Ideals and \\Fractional Ideals}
+	child { node {Number Fields and Rings of Integers}}
+	child { node {Unique Factorization into Prime Ideals [\ref{mindmp:decision to search rlwe}]}}
+	child { node {Dual Lattices and Different Ideals [\ref{mindmap:rlwe defn}]}}
+};
+\end{tikzpicture}
+
+\begin{enumerate}
+\item Definition of RLWE and related ideal lattice problems \label{mindmap:rlwe defn}
+\item Efficient computations in RLWE-based cryptosystems \label{mindmap:rlwe computations}
+\item Hardness of Search RLWE \label{mindmap:search rlwe}
+\item Decision to Search RLWE reduction \label{mindmp:decision to search rlwe}
+\end{enumerate}
+
+\newpage
+\section{Notation}
+
+We list here the key symbols and notations used in the tutorial.
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{|p{.31\textwidth}|p{.65\textwidth}|}
+    \hline
+    Symbol & Meaning \\
+    \hline \hline
+        $\Z$ & Integers \\
+        \hline
+        $\Q$ & Rational numbers \\
+        \hline
+        $\F_q$ for prime number $q$ & $\Z/q \Z= \{0, 1, 2, \ldots, q-1\}$   \\
+        \hline
+        $\Z[x]$ & Polynomials where the coefficients are integers \\
+        \hline
+        $F[x]$ & Polynomials where the coefficients take on values in $F$ \\
+        \hline
+        $\F_q[x]$ & Polynomials where the coefficients take on values in $\F_q$ \\
+        \hline
+        $\Z[\alpha]$ & the ring obtained by adjoining\index{adjoin} $\alpha$ to $\Z$ \\%, i.e. $\{ a + b\cdot\alpha : a,b \in \Z \}$ \\
+        \hline
+        $\Q(\alpha)$ & the smallest extension field of $\Q$ that contains $\alpha$ \\ %; when $\alpha$ is algebraic, this takes the simple form $\Q(\alpha) = \{ a + b\cdot\zeta : a,b \in \Q \}$ \\ 
+        \hline
+        $F[a]$ for a field $F$ & the set $\{ f(a) : f(x) \in F[x] \}$ \\
+        \hline
+        $F(a)$ for a field $F$ & the smallest extension field of $F$ that contains $a$ \\
+        \hline
+        $(a)$ for $a$ in ring $R$ & the ideal $\{ ar : r \in R\}$ \\ 
+        \hline
+        $(a_1,\ldots,a_n)$ for $a_i$ in ring $R$ & the ideal $\{ r_1 a_1 + \cdots + r_n a_n : r_i \in R \}$ \\
+        \hline
+        $R/I$ for a ring $R$ and an ideal $I$ & the quotient ring\index{quotient ring} of $R$ by $I$, which is the set of cosets of $I$ in $R$ \\
+        \hline
+        $\Z_n^*$ & multiplicative group modulo $n$; i.e. the set of all (multiplicatively) invertible elements in $\Z_m$; or equivalently $\{ k : k \in \{0,1,\ldots,n-1\}, \gcd(n,k) = 1 \}$ \\
+        \hline
+        $(\Z/n\Z)^*$ & same as $\Z_n^*$ \\
+        \hline
+        $E/F$ for fields $E$ and $F$ & a field extension\index{field extension}, where $F$ (the subfield) is contained in $E$ (the extension field) \\
+        \hline
+        $\zeta_n$ & the $n$-th root of unity \\
+        \hline
+        $\Phi_n(x)$ & the $n$-th cyclotomic polynomial \\
+        \hline
+        $\phi(n)$ & Euler's totient function \marginnote{More common $\varphi$} \\
+        \hline
+        $\lfloor x \rceil$ & rouding to the integer nearest to $x$ \\
+        \hline 
+        $[n]$ & $ \{ 1,2,\ldots, n \} $ \\
+        \hline
+    \end{tabular}
+    \caption{List of key symbols}
+    \label{tab:notation}
+\end{table}
+
+\end{document}
