@@ -1,0 +1,246 @@
+\documentclass[letterpaper]{article}
+
+%\graphicspath{{images/}{{\subfix{images/}}}}
+%\graphicspath{{\subfix{images/}}}
+
+\usepackage{arxiv}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{blindtext}
+\usepackage{xr} % corss reference different .tex files
+
+% Set the typeface to Times Roman
+\usepackage{times}
+
+% personal packages-------------------------------- 
+\usepackage[round]{natbib} % natbib citation style
+\usepackage[dvipsnames]{xcolor} % text color
+\usepackage{amsmath} % basic maths symbols 
+\usepackage{amsthm,amssymb} % define proof environment
+\usepackage{amsfonts} % extended maths symbols and fonts 
+\usepackage{nicefrac} % compact symbols for 1/2, etc.
+%\usepackage{subfigure} % allow sub-figures 
+\usepackage{enumitem} % customized numbering style
+\usepackage{setspace} % double space
+\usepackage{algorithm2e} % algorithm package 
+%\usepackage{hyperref} 
+\usepackage[hidelinks]{hyperref} % clickable links
+\usepackage{graphicx}
+\usepackage[most]{tcolorbox}
+%\usepackage{empheq}
+\usepackage{marginnote}
+\usepackage{stackengine}
+% \usepackage{eufrak}
+\usepackage{cleveref}
+\usepackage{cancel} %to cancel math terms in equation
+\usepackage{imakeidx}
+%--------------------------------------------------
+
+% tikz package and its libraries for drawing graphshttps://www.overleaf.com/project/5c6b6dc56db16163cf1f3609
+\usepackage{tikz} % drawing graph
+\usetikzlibrary{arrows.meta} % drawing graph
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{positioning,chains,fit,shapes,calc}
+\usetikzlibrary{angles,patterns}
+\usepackage{subcaption}
+\usetikzlibrary{matrix,quotes}
+\usetikzlibrary{decorations.pathmorphing, calc}
+\usetikzlibrary{mindmap}
+
+%--------------------------------------------------
+\renewcommand{\arraystretch}{1.2} % increase the height of the table rows
+
+% new commands for definitions and theorems--------
+\newtheorem{theorem}{Theorem}[subsection]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{remark}[theorem]{Remark} % [section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition} % [section] % definition numbers are dependent on theorem numbers
+\newtheorem{example}[theorem]{Example} % [section] % same for example numbers
+\newcommand{\cmt}[2][.5\linewidth]{\leavevmode\hfill\makebox[#1][l]{//~#2}}
+
+
+% new commands for mathematical notations--------
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\T}{\mathbb{T}}
+\newcommand{\OO}{\mathcal{O}}
+\newcommand{\DD}{\mathcal{D}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\calA}{\mathcal{A}}
+\newcommand{\vc}[1]{\mathbf{#1}}
+\newcommand{\tO}{\Tilde{O}}
+\newcommand{\dual}[1]{#1^{\vee}}
+\newcommand{\inv}[1]{#1^{-1}}
+\newcommand{\mfq}{\mathfrak{q}}
+\newcommand{\mfp}{\mathfrak{p}}
+\newcommand{\ok}{\mathcal{O}_K}
+
+
+\newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor} %floor
+\newcommand{\ceil}[1]{\left\lceil{#1}\right\rceil} %ceiling
+\newcommand{\round}[1]{\left\lfloor{#1}\right\rceil} %round
+\newcommand{\innerprod}[1]{\langle{#1}\rangle} %inner product
+\newcommand{\sqbracket}[1]{\left[{#1}\right]} %square bracket
+\newcommand{\bracket}[1]{\left({#1}\right)} %bracket
+
+\newcommand{\he}{\text{HE}}
+\newcommand{\keygen}{\text{Keygen}}
+\newcommand{\seckeygen}{\text{SecretKeygen}}
+\newcommand{\pubkeygen}{\text{PublicKeygen}}
+\newcommand{\evalkeygen}{\text{EvalKeygen}}
+\newcommand{\enc}{\text{Enc}}
+\newcommand{\dec}{\text{Dec}}
+\newcommand{\eval}{\text{Eval}}
+\newcommand{\setup}{\text{Setup}}
+\newcommand{\add}{\text{Add}}
+\newcommand{\mult}{\text{Mult}}
+\newcommand{\relin}{\text{Relin}}
+
+\newcommand{\pk}{\text{pk}}
+\newcommand{\sk}{\text{sk}}
+\newcommand{\evk}{\text{evk}}
+\newcommand{\rlk}{\text{rlk}}
+
+\newcommand{\bts}{\text{BTS}}
+\newcommand{\sh}{\text{SH}}
+\newcommand{\reg}{\text{Regev}}
+\newcommand{\bvv}{\text{BV}^*}
+\newcommand{\bv}{\text{BV}}
+\newcommand{\para}{\text{params}}
+\newcommand{\bgv}{\text{BGV}}
+\newcommand{\brak}{\text{B}}
+\newcommand{\bfv}{\text{BFV}}
+
+\newcommand{\powersoftwo}{\text{PowersOfTwo}}
+\newcommand{\bitdecomp}{\text{BitDecomp}}
+\newcommand{\switchkey}{\text{SwitchKey}}
+\newcommand{\switchkeygen}{\text{SwitchKeyGen}}
+
+
+\newcommand{\kl}[1]{{\color{orange}#1}}
+\newcommand{\ks}[1]{{\color{blue}#1}}
+\newcommand{\mikep}[1]{{\color{red}#1}}
+
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+
+% make index page 
+%\usepackage{imakeidx}
+%\makeindex
+
+
+
+\title{A Tutorial Introduction on Lattice-based Cryptography and Homomorphic Encryption}
+
+
+\author{
+  Yang Li \\
+  %\thanks{Use footnote for providing further information about author} \\
+  School of Computing\\
+  Australian National University\\
+  Canberra, ACT, 2600 \\
+  \texttt{kelvin.li@anu.edu.au} \\
+  %% examples of more authors
+   \And
+ Kee Siong Ng \\
+  School of Computing\\
+  Australian National University\\
+  Canberra, ACT, 2600 \\
+  \texttt{keesiong.ng@anu.edu.au} \\
+  \And
+  Michael Purcell \\
+  School of Computing \\
+  Australian National University \\
+  Canberra, ACT, 2600 \\
+  \texttt{michael.purcell1@anu.edu.au}\\
+}
+
+\setlength{\parindent}{1.5em}
+
+\usepackage{subfiles} % Best loaded last in the preamble
+
+\makeindex
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+%\newpage
+%\section{Course Design}
+%\subfile{sections/course design}
+
+\newpage
+\section{Introduction}
+\subfile{sections/introduction}
+
+\newpage
+\section{Computational Complexity Theory}\label{sec:computational complexity}
+\subfile{sections/complexity theory}
+
+\newpage
+\section{Cryptography Basics}
+\subfile{sections/crypto}
+
+
+\newpage
+\section{Lattice Theory}
+\subfile{sections/lattice theory}
+
+\newpage
+\section{Discrete Gaussian Distribution}\label{sec:discrete gaussian}
+\subfile{sections/discrete gaussian}
+
+\newpage
+\section{Learning with Errors}
+\subfile{sections/lwe}
+
+\newpage
+\section{Cyclotomic Polynomials and Cyclotomic Extensions}
+\subfile{sections/cyclotomic}
+
+\newpage
+\section{Algebraic Number Theory}\label{sec:ant short}
+\subfile{sections/ant shorter}
+
+\newpage
+\section{Ring Learning with Errors}
+\subfile{sections/ring lwe}
+
+\newpage
+\section{Homomorphic Encryption}
+\subfile{sections/he}
+
+\newpage
+\appendix
+\section{Abstract Algebra}
+\subfile{sections/abstract algebra}
+
+\newpage
+\section{Galois Theory}
+\subfile{sections/galois theory}
+
+\newpage
+\section{Algebraic Number Theory}
+\subfile{sections/ant longer}
+
+\newpage
+\section{Mind Maps}\label{sec:mind maps}
+\subfile{sections/mindmaps}
+
+
+\newpage
+\bibliography{references}\addcontentsline{toc}{section}{References}
+\bibliographystyle{abbrvnat}
+
+\newpage
+\printindex
+
+\end{document}
